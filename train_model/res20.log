@@ -1,0 +1,3115 @@
+I0805 12:42:50.378247  8884 caffe.cpp:218] Using GPUs 3
+I0805 12:42:50.401832  8884 caffe.cpp:223] GPU 3: GeForce GTX TITAN X
+I0805 12:42:51.076696  8884 solver.cpp:44] Initializing solver from parameters: 
+test_iter: 100
+test_interval: 2000
+base_lr: 0.0001
+display: 2000
+max_iter: 1000000
+lr_policy: "step"
+gamma: 0.9
+momentum: 0.9
+weight_decay: 0.0005
+stepsize: 10000
+snapshot: 2000
+snapshot_prefix: "/home/username/ocr8100/model/snap_shot20/"
+solver_mode: GPU
+device_id: 3
+net: "train20.prototxt"
+train_state {
+  level: 0
+  stage: ""
+}
+I0805 12:42:51.077052  8884 solver.cpp:87] Creating training net from net file: train20.prototxt
+I0805 12:42:51.079437  8884 net.cpp:296] The NetState phase (0) differed from the phase (1) specified by a rule in layer data
+I0805 12:42:51.079519  8884 net.cpp:296] The NetState phase (0) differed from the phase (1) specified by a rule in layer acc_test
+I0805 12:42:51.080026  8884 net.cpp:53] Initializing net from parameters: 
+name: "CaffeNet"
+state {
+  phase: TRAIN
+  level: 0
+  stage: ""
+}
+layer {
+  name: "data"
+  type: "ImageDataRegression"
+  top: "data"
+  top: "raw_label"
+  include {
+    phase: TRAIN
+  }
+  transform_param {
+    mirror: false
+  }
+  data_param {
+    prefetch: 32
+  }
+  image_data_regression_param {
+    source: "well_placed.list"
+    batch_size: 62
+    shuffle: true
+    new_height: 32
+    new_width: 32
+    is_color: false
+    regression_num: 5
+  }
+}
+layer {
+  name: "raw_label_slice"
+  type: "Slice"
+  bottom: "raw_label"
+  top: "label"
+  top: "silence_label"
+  include {
+    phase: TRAIN
+  }
+  slice_param {
+    slice_point: 1
+    axis: 1
+  }
+}
+layer {
+  name: "label_silence"
+  type: "Silence"
+  bottom: "silence_label"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn1"
+  type: "BN"
+  bottom: "conv1"
+  top: "scale1"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "scale1"
+  top: "scale1"
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "scale1"
+  top: "conv2"
+  convolution_param {
+    num_output: 64
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn2"
+  type: "BN"
+  bottom: "conv2"
+  top: "scale2"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "scale2"
+  top: "scale2"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "scale2"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv3"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    pad: 0
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn3"
+  type: "BN"
+  bottom: "conv3"
+  top: "scale3"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "scale3"
+  top: "scale3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "scale3"
+  top: "conv4"
+  convolution_param {
+    num_output: 64
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn4"
+  type: "BN"
+  bottom: "conv4"
+  top: "scale4"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "scale4"
+  top: "scale4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv5"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    pad: 0
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn5"
+  type: "BN"
+  bottom: "conv5"
+  top: "scale5"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "scale5"
+  top: "scale5"
+}
+layer {
+  name: "concat1"
+  type: "Concat"
+  bottom: "scale5"
+  bottom: "scale4"
+  top: "concat1"
+}
+layer {
+  name: "conv6"
+  type: "Convolution"
+  bottom: "concat1"
+  top: "conv6"
+  convolution_param {
+    num_output: 96
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn6"
+  type: "BN"
+  bottom: "conv6"
+  top: "scale6"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "scale6"
+  top: "scale6"
+}
+layer {
+  name: "conv7"
+  type: "Convolution"
+  bottom: "scale6"
+  top: "conv7"
+  convolution_param {
+    num_output: 48
+    bias_term: false
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn7"
+  type: "BN"
+  bottom: "conv7"
+  top: "scale7"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "scale7"
+  top: "scale7"
+}
+layer {
+  name: "conv8"
+  type: "Convolution"
+  bottom: "scale7"
+  top: "conv8"
+  convolution_param {
+    num_output: 96
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn8"
+  type: "BN"
+  bottom: "conv8"
+  top: "scale8"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu8"
+  type: "ReLU"
+  bottom: "scale8"
+  top: "scale8"
+}
+layer {
+  name: "conv9"
+  type: "Convolution"
+  bottom: "scale6"
+  top: "conv9"
+  convolution_param {
+    num_output: 48
+    bias_term: false
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn9"
+  type: "BN"
+  bottom: "conv9"
+  top: "scale9"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu9"
+  type: "ReLU"
+  bottom: "scale9"
+  top: "scale9"
+}
+layer {
+  name: "concat2"
+  type: "Concat"
+  bottom: "scale9"
+  bottom: "scale8"
+  top: "pool3"
+}
+layer {
+  name: "conv10"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "conv10"
+  convolution_param {
+    num_output: 128
+    bias_term: false
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn10"
+  type: "BN"
+  bottom: "conv10"
+  top: "scale10"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu10"
+  type: "ReLU"
+  bottom: "scale10"
+  top: "scale10"
+}
+layer {
+  name: "conv11"
+  type: "Convolution"
+  bottom: "scale10"
+  top: "conv11"
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "conv11_bn"
+  type: "BN"
+  bottom: "conv11"
+  top: "conv11_bn"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv11_bn"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 3
+  }
+}
+layer {
+  name: "fc5"
+  type: "InnerProduct"
+  bottom: "pool4"
+  top: "fc5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2048
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "fc5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 62
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "softmax_loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc6"
+  bottom: "label"
+  top: "softmax_loss"
+  include {
+    phase: TRAIN
+  }
+}
+layer {
+  name: "acc_train"
+  type: "Accuracy"
+  bottom: "fc6"
+  bottom: "label"
+  top: "acc_train"
+  include {
+    phase: TRAIN
+  }
+}
+I0805 12:42:51.080462  8884 layer_factory.hpp:77] Creating layer data
+I0805 12:42:51.085047  8884 net.cpp:86] Creating Layer data
+I0805 12:42:51.085088  8884 net.cpp:382] data -> data
+I0805 12:42:51.085135  8884 net.cpp:382] data -> raw_label
+I0805 12:42:51.085170  8884 image_data_regression.hpp:44] Opening file well_placed.list
+I0805 12:42:54.402217  8884 image_data_regression.cpp:52] Shuffling data
+I0805 12:42:54.750668  8884 image_data_regression.cpp:62] A total of 3067264 images.
+I0805 12:42:54.752272  8884 image_data_regression.cpp:93] output data size: 62,1,32,32
+I0805 12:42:54.752311  8884 image_data_regression.cpp:101] top[1]->num_axes: 2
+I0805 12:42:54.763540  8884 net.cpp:124] Setting up data
+I0805 12:42:54.763577  8884 net.cpp:131] Top shape: 62 1 32 32 (63488)
+I0805 12:42:54.763583  8884 net.cpp:131] Top shape: 62 5 (310)
+I0805 12:42:54.763586  8884 net.cpp:139] Memory required for data: 255192
+I0805 12:42:54.763597  8884 layer_factory.hpp:77] Creating layer raw_label_slice
+I0805 12:42:54.763659  8884 net.cpp:86] Creating Layer raw_label_slice
+I0805 12:42:54.763669  8884 net.cpp:408] raw_label_slice <- raw_label
+I0805 12:42:54.763684  8884 net.cpp:382] raw_label_slice -> label
+I0805 12:42:54.763701  8884 net.cpp:382] raw_label_slice -> silence_label
+I0805 12:42:54.763823  8884 net.cpp:124] Setting up raw_label_slice
+I0805 12:42:54.763833  8884 net.cpp:131] Top shape: 62 1 (62)
+I0805 12:42:54.763837  8884 net.cpp:131] Top shape: 62 4 (248)
+I0805 12:42:54.763840  8884 net.cpp:139] Memory required for data: 256432
+I0805 12:42:54.763844  8884 layer_factory.hpp:77] Creating layer label_raw_label_slice_0_split
+I0805 12:42:54.763866  8884 net.cpp:86] Creating Layer label_raw_label_slice_0_split
+I0805 12:42:54.763872  8884 net.cpp:408] label_raw_label_slice_0_split <- label
+I0805 12:42:54.763877  8884 net.cpp:382] label_raw_label_slice_0_split -> label_raw_label_slice_0_split_0
+I0805 12:42:54.763885  8884 net.cpp:382] label_raw_label_slice_0_split -> label_raw_label_slice_0_split_1
+I0805 12:42:54.763953  8884 net.cpp:124] Setting up label_raw_label_slice_0_split
+I0805 12:42:54.763962  8884 net.cpp:131] Top shape: 62 1 (62)
+I0805 12:42:54.763967  8884 net.cpp:131] Top shape: 62 1 (62)
+I0805 12:42:54.763969  8884 net.cpp:139] Memory required for data: 256928
+I0805 12:42:54.763972  8884 layer_factory.hpp:77] Creating layer label_silence
+I0805 12:42:54.763998  8884 net.cpp:86] Creating Layer label_silence
+I0805 12:42:54.764001  8884 net.cpp:408] label_silence <- silence_label
+I0805 12:42:54.764006  8884 net.cpp:124] Setting up label_silence
+I0805 12:42:54.764009  8884 net.cpp:139] Memory required for data: 256928
+I0805 12:42:54.764014  8884 layer_factory.hpp:77] Creating layer conv1
+I0805 12:42:54.764036  8884 net.cpp:86] Creating Layer conv1
+I0805 12:42:54.764041  8884 net.cpp:408] conv1 <- data
+I0805 12:42:54.764046  8884 net.cpp:382] conv1 -> conv1
+I0805 12:42:55.558553  8884 net.cpp:124] Setting up conv1
+I0805 12:42:55.558590  8884 net.cpp:131] Top shape: 62 32 14 14 (388864)
+I0805 12:42:55.558598  8884 net.cpp:139] Memory required for data: 1812384
+I0805 12:42:55.558619  8884 layer_factory.hpp:77] Creating layer bn1
+I0805 12:42:55.558641  8884 net.cpp:86] Creating Layer bn1
+I0805 12:42:55.558650  8884 net.cpp:408] bn1 <- conv1
+I0805 12:42:55.558657  8884 net.cpp:382] bn1 -> scale1
+I0805 12:42:55.558995  8884 net.cpp:124] Setting up bn1
+I0805 12:42:55.559007  8884 net.cpp:131] Top shape: 62 32 14 14 (388864)
+I0805 12:42:55.559011  8884 net.cpp:139] Memory required for data: 3367840
+I0805 12:42:55.559026  8884 layer_factory.hpp:77] Creating layer relu1
+I0805 12:42:55.559037  8884 net.cpp:86] Creating Layer relu1
+I0805 12:42:55.559042  8884 net.cpp:408] relu1 <- scale1
+I0805 12:42:55.559052  8884 net.cpp:369] relu1 -> scale1 (in-place)
+I0805 12:42:55.559561  8884 net.cpp:124] Setting up relu1
+I0805 12:42:55.559579  8884 net.cpp:131] Top shape: 62 32 14 14 (388864)
+I0805 12:42:55.559584  8884 net.cpp:139] Memory required for data: 4923296
+I0805 12:42:55.559589  8884 layer_factory.hpp:77] Creating layer conv2
+I0805 12:42:55.559602  8884 net.cpp:86] Creating Layer conv2
+I0805 12:42:55.559607  8884 net.cpp:408] conv2 <- scale1
+I0805 12:42:55.559614  8884 net.cpp:382] conv2 -> conv2
+I0805 12:42:55.562783  8884 net.cpp:124] Setting up conv2
+I0805 12:42:55.562806  8884 net.cpp:131] Top shape: 62 64 14 14 (777728)
+I0805 12:42:55.562811  8884 net.cpp:139] Memory required for data: 8034208
+I0805 12:42:55.562819  8884 layer_factory.hpp:77] Creating layer bn2
+I0805 12:42:55.562834  8884 net.cpp:86] Creating Layer bn2
+I0805 12:42:55.562839  8884 net.cpp:408] bn2 <- conv2
+I0805 12:42:55.562847  8884 net.cpp:382] bn2 -> scale2
+I0805 12:42:55.563156  8884 net.cpp:124] Setting up bn2
+I0805 12:42:55.563169  8884 net.cpp:131] Top shape: 62 64 14 14 (777728)
+I0805 12:42:55.563172  8884 net.cpp:139] Memory required for data: 11145120
+I0805 12:42:55.563184  8884 layer_factory.hpp:77] Creating layer relu2
+I0805 12:42:55.563191  8884 net.cpp:86] Creating Layer relu2
+I0805 12:42:55.563206  8884 net.cpp:408] relu2 <- scale2
+I0805 12:42:55.563217  8884 net.cpp:369] relu2 -> scale2 (in-place)
+I0805 12:42:55.563485  8884 net.cpp:124] Setting up relu2
+I0805 12:42:55.563500  8884 net.cpp:131] Top shape: 62 64 14 14 (777728)
+I0805 12:42:55.563504  8884 net.cpp:139] Memory required for data: 14256032
+I0805 12:42:55.563509  8884 layer_factory.hpp:77] Creating layer pool1
+I0805 12:42:55.563519  8884 net.cpp:86] Creating Layer pool1
+I0805 12:42:55.563524  8884 net.cpp:408] pool1 <- scale2
+I0805 12:42:55.563530  8884 net.cpp:382] pool1 -> pool1
+I0805 12:42:55.563596  8884 net.cpp:124] Setting up pool1
+I0805 12:42:55.563607  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.563611  8884 net.cpp:139] Memory required for data: 15033760
+I0805 12:42:55.563618  8884 layer_factory.hpp:77] Creating layer pool1_pool1_0_split
+I0805 12:42:55.563625  8884 net.cpp:86] Creating Layer pool1_pool1_0_split
+I0805 12:42:55.563630  8884 net.cpp:408] pool1_pool1_0_split <- pool1
+I0805 12:42:55.563637  8884 net.cpp:382] pool1_pool1_0_split -> pool1_pool1_0_split_0
+I0805 12:42:55.563643  8884 net.cpp:382] pool1_pool1_0_split -> pool1_pool1_0_split_1
+I0805 12:42:55.563686  8884 net.cpp:124] Setting up pool1_pool1_0_split
+I0805 12:42:55.563695  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.563700  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.563722  8884 net.cpp:139] Memory required for data: 16589216
+I0805 12:42:55.563727  8884 layer_factory.hpp:77] Creating layer conv3
+I0805 12:42:55.563745  8884 net.cpp:86] Creating Layer conv3
+I0805 12:42:55.563751  8884 net.cpp:408] conv3 <- pool1_pool1_0_split_0
+I0805 12:42:55.563758  8884 net.cpp:382] conv3 -> conv3
+I0805 12:42:55.566032  8884 net.cpp:124] Setting up conv3
+I0805 12:42:55.566052  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.566058  8884 net.cpp:139] Memory required for data: 16978080
+I0805 12:42:55.566066  8884 layer_factory.hpp:77] Creating layer bn3
+I0805 12:42:55.566074  8884 net.cpp:86] Creating Layer bn3
+I0805 12:42:55.566079  8884 net.cpp:408] bn3 <- conv3
+I0805 12:42:55.566087  8884 net.cpp:382] bn3 -> scale3
+I0805 12:42:55.566406  8884 net.cpp:124] Setting up bn3
+I0805 12:42:55.566418  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.566422  8884 net.cpp:139] Memory required for data: 17366944
+I0805 12:42:55.566432  8884 layer_factory.hpp:77] Creating layer relu3
+I0805 12:42:55.566438  8884 net.cpp:86] Creating Layer relu3
+I0805 12:42:55.566443  8884 net.cpp:408] relu3 <- scale3
+I0805 12:42:55.566449  8884 net.cpp:369] relu3 -> scale3 (in-place)
+I0805 12:42:55.567028  8884 net.cpp:124] Setting up relu3
+I0805 12:42:55.567046  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.567050  8884 net.cpp:139] Memory required for data: 17755808
+I0805 12:42:55.567057  8884 layer_factory.hpp:77] Creating layer conv4
+I0805 12:42:55.567072  8884 net.cpp:86] Creating Layer conv4
+I0805 12:42:55.567077  8884 net.cpp:408] conv4 <- scale3
+I0805 12:42:55.567086  8884 net.cpp:382] conv4 -> conv4
+I0805 12:42:55.569444  8884 net.cpp:124] Setting up conv4
+I0805 12:42:55.569465  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.569470  8884 net.cpp:139] Memory required for data: 18533536
+I0805 12:42:55.569478  8884 layer_factory.hpp:77] Creating layer bn4
+I0805 12:42:55.569491  8884 net.cpp:86] Creating Layer bn4
+I0805 12:42:55.569496  8884 net.cpp:408] bn4 <- conv4
+I0805 12:42:55.569504  8884 net.cpp:382] bn4 -> scale4
+I0805 12:42:55.569849  8884 net.cpp:124] Setting up bn4
+I0805 12:42:55.569861  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.569865  8884 net.cpp:139] Memory required for data: 19311264
+I0805 12:42:55.569876  8884 layer_factory.hpp:77] Creating layer relu4
+I0805 12:42:55.569885  8884 net.cpp:86] Creating Layer relu4
+I0805 12:42:55.569890  8884 net.cpp:408] relu4 <- scale4
+I0805 12:42:55.569896  8884 net.cpp:369] relu4 -> scale4 (in-place)
+I0805 12:42:55.570196  8884 net.cpp:124] Setting up relu4
+I0805 12:42:55.570210  8884 net.cpp:131] Top shape: 62 64 7 7 (194432)
+I0805 12:42:55.570214  8884 net.cpp:139] Memory required for data: 20088992
+I0805 12:42:55.570219  8884 layer_factory.hpp:77] Creating layer conv5
+I0805 12:42:55.570232  8884 net.cpp:86] Creating Layer conv5
+I0805 12:42:55.570237  8884 net.cpp:408] conv5 <- pool1_pool1_0_split_1
+I0805 12:42:55.570246  8884 net.cpp:382] conv5 -> conv5
+I0805 12:42:55.572065  8884 net.cpp:124] Setting up conv5
+I0805 12:42:55.572084  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.572089  8884 net.cpp:139] Memory required for data: 20477856
+I0805 12:42:55.572098  8884 layer_factory.hpp:77] Creating layer bn5
+I0805 12:42:55.572108  8884 net.cpp:86] Creating Layer bn5
+I0805 12:42:55.572113  8884 net.cpp:408] bn5 <- conv5
+I0805 12:42:55.572121  8884 net.cpp:382] bn5 -> scale5
+I0805 12:42:55.572454  8884 net.cpp:124] Setting up bn5
+I0805 12:42:55.572466  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.572470  8884 net.cpp:139] Memory required for data: 20866720
+I0805 12:42:55.572479  8884 layer_factory.hpp:77] Creating layer relu5
+I0805 12:42:55.572487  8884 net.cpp:86] Creating Layer relu5
+I0805 12:42:55.572491  8884 net.cpp:408] relu5 <- scale5
+I0805 12:42:55.572497  8884 net.cpp:369] relu5 -> scale5 (in-place)
+I0805 12:42:55.573135  8884 net.cpp:124] Setting up relu5
+I0805 12:42:55.573158  8884 net.cpp:131] Top shape: 62 32 7 7 (97216)
+I0805 12:42:55.573177  8884 net.cpp:139] Memory required for data: 21255584
+I0805 12:42:55.573182  8884 layer_factory.hpp:77] Creating layer concat1
+I0805 12:42:55.573197  8884 net.cpp:86] Creating Layer concat1
+I0805 12:42:55.573202  8884 net.cpp:408] concat1 <- scale5
+I0805 12:42:55.573207  8884 net.cpp:408] concat1 <- scale4
+I0805 12:42:55.573216  8884 net.cpp:382] concat1 -> concat1
+I0805 12:42:55.573257  8884 net.cpp:124] Setting up concat1
+I0805 12:42:55.573267  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.573271  8884 net.cpp:139] Memory required for data: 22422176
+I0805 12:42:55.573276  8884 layer_factory.hpp:77] Creating layer conv6
+I0805 12:42:55.573288  8884 net.cpp:86] Creating Layer conv6
+I0805 12:42:55.573295  8884 net.cpp:408] conv6 <- concat1
+I0805 12:42:55.573303  8884 net.cpp:382] conv6 -> conv6
+I0805 12:42:55.578809  8884 net.cpp:124] Setting up conv6
+I0805 12:42:55.578828  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.578833  8884 net.cpp:139] Memory required for data: 23588768
+I0805 12:42:55.578841  8884 layer_factory.hpp:77] Creating layer bn6
+I0805 12:42:55.578850  8884 net.cpp:86] Creating Layer bn6
+I0805 12:42:55.578855  8884 net.cpp:408] bn6 <- conv6
+I0805 12:42:55.578863  8884 net.cpp:382] bn6 -> scale6
+I0805 12:42:55.579197  8884 net.cpp:124] Setting up bn6
+I0805 12:42:55.579208  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.579212  8884 net.cpp:139] Memory required for data: 24755360
+I0805 12:42:55.579221  8884 layer_factory.hpp:77] Creating layer relu6
+I0805 12:42:55.579227  8884 net.cpp:86] Creating Layer relu6
+I0805 12:42:55.579231  8884 net.cpp:408] relu6 <- scale6
+I0805 12:42:55.579238  8884 net.cpp:369] relu6 -> scale6 (in-place)
+I0805 12:42:55.579800  8884 net.cpp:124] Setting up relu6
+I0805 12:42:55.579818  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.579823  8884 net.cpp:139] Memory required for data: 25921952
+I0805 12:42:55.579826  8884 layer_factory.hpp:77] Creating layer scale6_relu6_0_split
+I0805 12:42:55.579833  8884 net.cpp:86] Creating Layer scale6_relu6_0_split
+I0805 12:42:55.579840  8884 net.cpp:408] scale6_relu6_0_split <- scale6
+I0805 12:42:55.579846  8884 net.cpp:382] scale6_relu6_0_split -> scale6_relu6_0_split_0
+I0805 12:42:55.579854  8884 net.cpp:382] scale6_relu6_0_split -> scale6_relu6_0_split_1
+I0805 12:42:55.579916  8884 net.cpp:124] Setting up scale6_relu6_0_split
+I0805 12:42:55.579924  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.579931  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.579933  8884 net.cpp:139] Memory required for data: 28255136
+I0805 12:42:55.579937  8884 layer_factory.hpp:77] Creating layer conv7
+I0805 12:42:55.579951  8884 net.cpp:86] Creating Layer conv7
+I0805 12:42:55.579957  8884 net.cpp:408] conv7 <- scale6_relu6_0_split_0
+I0805 12:42:55.579963  8884 net.cpp:382] conv7 -> conv7
+I0805 12:42:55.582518  8884 net.cpp:124] Setting up conv7
+I0805 12:42:55.582538  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.582543  8884 net.cpp:139] Memory required for data: 28838432
+I0805 12:42:55.582551  8884 layer_factory.hpp:77] Creating layer bn7
+I0805 12:42:55.582561  8884 net.cpp:86] Creating Layer bn7
+I0805 12:42:55.582566  8884 net.cpp:408] bn7 <- conv7
+I0805 12:42:55.582576  8884 net.cpp:382] bn7 -> scale7
+I0805 12:42:55.582922  8884 net.cpp:124] Setting up bn7
+I0805 12:42:55.582934  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.582938  8884 net.cpp:139] Memory required for data: 29421728
+I0805 12:42:55.582952  8884 layer_factory.hpp:77] Creating layer relu7
+I0805 12:42:55.582960  8884 net.cpp:86] Creating Layer relu7
+I0805 12:42:55.582965  8884 net.cpp:408] relu7 <- scale7
+I0805 12:42:55.582970  8884 net.cpp:369] relu7 -> scale7 (in-place)
+I0805 12:42:55.583261  8884 net.cpp:124] Setting up relu7
+I0805 12:42:55.583274  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.583278  8884 net.cpp:139] Memory required for data: 30005024
+I0805 12:42:55.583282  8884 layer_factory.hpp:77] Creating layer conv8
+I0805 12:42:55.583308  8884 net.cpp:86] Creating Layer conv8
+I0805 12:42:55.583314  8884 net.cpp:408] conv8 <- scale7
+I0805 12:42:55.583320  8884 net.cpp:382] conv8 -> conv8
+I0805 12:42:55.586731  8884 net.cpp:124] Setting up conv8
+I0805 12:42:55.586751  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.586756  8884 net.cpp:139] Memory required for data: 31171616
+I0805 12:42:55.586766  8884 layer_factory.hpp:77] Creating layer bn8
+I0805 12:42:55.586777  8884 net.cpp:86] Creating Layer bn8
+I0805 12:42:55.586782  8884 net.cpp:408] bn8 <- conv8
+I0805 12:42:55.586788  8884 net.cpp:382] bn8 -> scale8
+I0805 12:42:55.587133  8884 net.cpp:124] Setting up bn8
+I0805 12:42:55.587144  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.587148  8884 net.cpp:139] Memory required for data: 32338208
+I0805 12:42:55.587157  8884 layer_factory.hpp:77] Creating layer relu8
+I0805 12:42:55.587163  8884 net.cpp:86] Creating Layer relu8
+I0805 12:42:55.587167  8884 net.cpp:408] relu8 <- scale8
+I0805 12:42:55.587175  8884 net.cpp:369] relu8 -> scale8 (in-place)
+I0805 12:42:55.587684  8884 net.cpp:124] Setting up relu8
+I0805 12:42:55.587702  8884 net.cpp:131] Top shape: 62 96 7 7 (291648)
+I0805 12:42:55.587707  8884 net.cpp:139] Memory required for data: 33504800
+I0805 12:42:55.587710  8884 layer_factory.hpp:77] Creating layer conv9
+I0805 12:42:55.587725  8884 net.cpp:86] Creating Layer conv9
+I0805 12:42:55.587730  8884 net.cpp:408] conv9 <- scale6_relu6_0_split_1
+I0805 12:42:55.587739  8884 net.cpp:382] conv9 -> conv9
+I0805 12:42:55.589465  8884 net.cpp:124] Setting up conv9
+I0805 12:42:55.589495  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.589501  8884 net.cpp:139] Memory required for data: 34088096
+I0805 12:42:55.589509  8884 layer_factory.hpp:77] Creating layer bn9
+I0805 12:42:55.589517  8884 net.cpp:86] Creating Layer bn9
+I0805 12:42:55.589521  8884 net.cpp:408] bn9 <- conv9
+I0805 12:42:55.589530  8884 net.cpp:382] bn9 -> scale9
+I0805 12:42:55.589872  8884 net.cpp:124] Setting up bn9
+I0805 12:42:55.589884  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.589887  8884 net.cpp:139] Memory required for data: 34671392
+I0805 12:42:55.589897  8884 layer_factory.hpp:77] Creating layer relu9
+I0805 12:42:55.589906  8884 net.cpp:86] Creating Layer relu9
+I0805 12:42:55.589910  8884 net.cpp:408] relu9 <- scale9
+I0805 12:42:55.589917  8884 net.cpp:369] relu9 -> scale9 (in-place)
+I0805 12:42:55.590206  8884 net.cpp:124] Setting up relu9
+I0805 12:42:55.590219  8884 net.cpp:131] Top shape: 62 48 7 7 (145824)
+I0805 12:42:55.590224  8884 net.cpp:139] Memory required for data: 35254688
+I0805 12:42:55.590227  8884 layer_factory.hpp:77] Creating layer concat2
+I0805 12:42:55.590235  8884 net.cpp:86] Creating Layer concat2
+I0805 12:42:55.590240  8884 net.cpp:408] concat2 <- scale9
+I0805 12:42:55.590247  8884 net.cpp:408] concat2 <- scale8
+I0805 12:42:55.590253  8884 net.cpp:382] concat2 -> pool3
+I0805 12:42:55.590296  8884 net.cpp:124] Setting up concat2
+I0805 12:42:55.590306  8884 net.cpp:131] Top shape: 62 144 7 7 (437472)
+I0805 12:42:55.590309  8884 net.cpp:139] Memory required for data: 37004576
+I0805 12:42:55.590313  8884 layer_factory.hpp:77] Creating layer conv10
+I0805 12:42:55.590324  8884 net.cpp:86] Creating Layer conv10
+I0805 12:42:55.590329  8884 net.cpp:408] conv10 <- pool3
+I0805 12:42:55.590335  8884 net.cpp:382] conv10 -> conv10
+I0805 12:42:55.597980  8884 net.cpp:124] Setting up conv10
+I0805 12:42:55.598001  8884 net.cpp:131] Top shape: 62 128 5 5 (198400)
+I0805 12:42:55.598006  8884 net.cpp:139] Memory required for data: 37798176
+I0805 12:42:55.598011  8884 layer_factory.hpp:77] Creating layer bn10
+I0805 12:42:55.598026  8884 net.cpp:86] Creating Layer bn10
+I0805 12:42:55.598031  8884 net.cpp:408] bn10 <- conv10
+I0805 12:42:55.598039  8884 net.cpp:382] bn10 -> scale10
+I0805 12:42:55.598373  8884 net.cpp:124] Setting up bn10
+I0805 12:42:55.598386  8884 net.cpp:131] Top shape: 62 128 5 5 (198400)
+I0805 12:42:55.598388  8884 net.cpp:139] Memory required for data: 38591776
+I0805 12:42:55.598397  8884 layer_factory.hpp:77] Creating layer relu10
+I0805 12:42:55.598421  8884 net.cpp:86] Creating Layer relu10
+I0805 12:42:55.598426  8884 net.cpp:408] relu10 <- scale10
+I0805 12:42:55.598431  8884 net.cpp:369] relu10 -> scale10 (in-place)
+I0805 12:42:55.598927  8884 net.cpp:124] Setting up relu10
+I0805 12:42:55.598944  8884 net.cpp:131] Top shape: 62 128 5 5 (198400)
+I0805 12:42:55.598949  8884 net.cpp:139] Memory required for data: 39385376
+I0805 12:42:55.598953  8884 layer_factory.hpp:77] Creating layer conv11
+I0805 12:42:55.598969  8884 net.cpp:86] Creating Layer conv11
+I0805 12:42:55.598975  8884 net.cpp:408] conv11 <- scale10
+I0805 12:42:55.598983  8884 net.cpp:382] conv11 -> conv11
+I0805 12:42:55.611959  8884 net.cpp:124] Setting up conv11
+I0805 12:42:55.611980  8884 net.cpp:131] Top shape: 62 256 3 3 (142848)
+I0805 12:42:55.611985  8884 net.cpp:139] Memory required for data: 39956768
+I0805 12:42:55.611994  8884 layer_factory.hpp:77] Creating layer conv11_bn
+I0805 12:42:55.612006  8884 net.cpp:86] Creating Layer conv11_bn
+I0805 12:42:55.612011  8884 net.cpp:408] conv11_bn <- conv11
+I0805 12:42:55.612017  8884 net.cpp:382] conv11_bn -> conv11_bn
+I0805 12:42:55.612332  8884 net.cpp:124] Setting up conv11_bn
+I0805 12:42:55.612344  8884 net.cpp:131] Top shape: 62 256 3 3 (142848)
+I0805 12:42:55.612347  8884 net.cpp:139] Memory required for data: 40528160
+I0805 12:42:55.612355  8884 layer_factory.hpp:77] Creating layer pool4
+I0805 12:42:55.612365  8884 net.cpp:86] Creating Layer pool4
+I0805 12:42:55.612370  8884 net.cpp:408] pool4 <- conv11_bn
+I0805 12:42:55.612376  8884 net.cpp:382] pool4 -> pool4
+I0805 12:42:55.612433  8884 net.cpp:124] Setting up pool4
+I0805 12:42:55.612443  8884 net.cpp:131] Top shape: 62 256 1 1 (15872)
+I0805 12:42:55.612447  8884 net.cpp:139] Memory required for data: 40591648
+I0805 12:42:55.612452  8884 layer_factory.hpp:77] Creating layer fc5
+I0805 12:42:55.612462  8884 net.cpp:86] Creating Layer fc5
+I0805 12:42:55.612468  8884 net.cpp:408] fc5 <- pool4
+I0805 12:42:55.612474  8884 net.cpp:382] fc5 -> fc5
+I0805 12:42:55.617914  8884 net.cpp:124] Setting up fc5
+I0805 12:42:55.617933  8884 net.cpp:131] Top shape: 62 2048 (126976)
+I0805 12:42:55.617936  8884 net.cpp:139] Memory required for data: 41099552
+I0805 12:42:55.617944  8884 layer_factory.hpp:77] Creating layer fc6
+I0805 12:42:55.617955  8884 net.cpp:86] Creating Layer fc6
+I0805 12:42:55.617960  8884 net.cpp:408] fc6 <- fc5
+I0805 12:42:55.617966  8884 net.cpp:382] fc6 -> fc6
+I0805 12:42:55.619838  8884 net.cpp:124] Setting up fc6
+I0805 12:42:55.619856  8884 net.cpp:131] Top shape: 62 62 (3844)
+I0805 12:42:55.619861  8884 net.cpp:139] Memory required for data: 41114928
+I0805 12:42:55.619868  8884 layer_factory.hpp:77] Creating layer fc6_fc6_0_split
+I0805 12:42:55.619876  8884 net.cpp:86] Creating Layer fc6_fc6_0_split
+I0805 12:42:55.619880  8884 net.cpp:408] fc6_fc6_0_split <- fc6
+I0805 12:42:55.619886  8884 net.cpp:382] fc6_fc6_0_split -> fc6_fc6_0_split_0
+I0805 12:42:55.619894  8884 net.cpp:382] fc6_fc6_0_split -> fc6_fc6_0_split_1
+I0805 12:42:55.619947  8884 net.cpp:124] Setting up fc6_fc6_0_split
+I0805 12:42:55.619958  8884 net.cpp:131] Top shape: 62 62 (3844)
+I0805 12:42:55.619963  8884 net.cpp:131] Top shape: 62 62 (3844)
+I0805 12:42:55.619966  8884 net.cpp:139] Memory required for data: 41145680
+I0805 12:42:55.619971  8884 layer_factory.hpp:77] Creating layer softmax_loss
+I0805 12:42:55.619978  8884 net.cpp:86] Creating Layer softmax_loss
+I0805 12:42:55.619984  8884 net.cpp:408] softmax_loss <- fc6_fc6_0_split_0
+I0805 12:42:55.619990  8884 net.cpp:408] softmax_loss <- label_raw_label_slice_0_split_0
+I0805 12:42:55.619995  8884 net.cpp:382] softmax_loss -> softmax_loss
+I0805 12:42:55.620007  8884 layer_factory.hpp:77] Creating layer softmax_loss
+I0805 12:42:55.623651  8884 net.cpp:124] Setting up softmax_loss
+I0805 12:42:55.623668  8884 net.cpp:131] Top shape: (1)
+I0805 12:42:55.623672  8884 net.cpp:134]     with loss weight 1
+I0805 12:42:55.623703  8884 net.cpp:139] Memory required for data: 41145684
+I0805 12:42:55.623708  8884 layer_factory.hpp:77] Creating layer acc_train
+I0805 12:42:55.623733  8884 net.cpp:86] Creating Layer acc_train
+I0805 12:42:55.623739  8884 net.cpp:408] acc_train <- fc6_fc6_0_split_1
+I0805 12:42:55.623744  8884 net.cpp:408] acc_train <- label_raw_label_slice_0_split_1
+I0805 12:42:55.623750  8884 net.cpp:382] acc_train -> acc_train
+I0805 12:42:55.623760  8884 net.cpp:124] Setting up acc_train
+I0805 12:42:55.623773  8884 net.cpp:131] Top shape: (1)
+I0805 12:42:55.623777  8884 net.cpp:139] Memory required for data: 41145688
+I0805 12:42:55.623780  8884 net.cpp:202] acc_train does not need backward computation.
+I0805 12:42:55.623785  8884 net.cpp:200] softmax_loss needs backward computation.
+I0805 12:42:55.623790  8884 net.cpp:200] fc6_fc6_0_split needs backward computation.
+I0805 12:42:55.623795  8884 net.cpp:200] fc6 needs backward computation.
+I0805 12:42:55.623798  8884 net.cpp:200] fc5 needs backward computation.
+I0805 12:42:55.623802  8884 net.cpp:200] pool4 needs backward computation.
+I0805 12:42:55.623806  8884 net.cpp:200] conv11_bn needs backward computation.
+I0805 12:42:55.623811  8884 net.cpp:200] conv11 needs backward computation.
+I0805 12:42:55.623814  8884 net.cpp:200] relu10 needs backward computation.
+I0805 12:42:55.623818  8884 net.cpp:200] bn10 needs backward computation.
+I0805 12:42:55.623822  8884 net.cpp:200] conv10 needs backward computation.
+I0805 12:42:55.623826  8884 net.cpp:200] concat2 needs backward computation.
+I0805 12:42:55.623831  8884 net.cpp:200] relu9 needs backward computation.
+I0805 12:42:55.623834  8884 net.cpp:200] bn9 needs backward computation.
+I0805 12:42:55.623838  8884 net.cpp:200] conv9 needs backward computation.
+I0805 12:42:55.623842  8884 net.cpp:200] relu8 needs backward computation.
+I0805 12:42:55.623847  8884 net.cpp:200] bn8 needs backward computation.
+I0805 12:42:55.623850  8884 net.cpp:200] conv8 needs backward computation.
+I0805 12:42:55.623854  8884 net.cpp:200] relu7 needs backward computation.
+I0805 12:42:55.623858  8884 net.cpp:200] bn7 needs backward computation.
+I0805 12:42:55.623862  8884 net.cpp:200] conv7 needs backward computation.
+I0805 12:42:55.623867  8884 net.cpp:200] scale6_relu6_0_split needs backward computation.
+I0805 12:42:55.623872  8884 net.cpp:200] relu6 needs backward computation.
+I0805 12:42:55.623875  8884 net.cpp:200] bn6 needs backward computation.
+I0805 12:42:55.623878  8884 net.cpp:200] conv6 needs backward computation.
+I0805 12:42:55.623883  8884 net.cpp:200] concat1 needs backward computation.
+I0805 12:42:55.623888  8884 net.cpp:200] relu5 needs backward computation.
+I0805 12:42:55.623891  8884 net.cpp:200] bn5 needs backward computation.
+I0805 12:42:55.623894  8884 net.cpp:200] conv5 needs backward computation.
+I0805 12:42:55.623898  8884 net.cpp:200] relu4 needs backward computation.
+I0805 12:42:55.623903  8884 net.cpp:200] bn4 needs backward computation.
+I0805 12:42:55.623906  8884 net.cpp:200] conv4 needs backward computation.
+I0805 12:42:55.623910  8884 net.cpp:200] relu3 needs backward computation.
+I0805 12:42:55.623914  8884 net.cpp:200] bn3 needs backward computation.
+I0805 12:42:55.623919  8884 net.cpp:200] conv3 needs backward computation.
+I0805 12:42:55.623922  8884 net.cpp:200] pool1_pool1_0_split needs backward computation.
+I0805 12:42:55.623926  8884 net.cpp:200] pool1 needs backward computation.
+I0805 12:42:55.623930  8884 net.cpp:200] relu2 needs backward computation.
+I0805 12:42:55.623934  8884 net.cpp:200] bn2 needs backward computation.
+I0805 12:42:55.623939  8884 net.cpp:200] conv2 needs backward computation.
+I0805 12:42:55.623942  8884 net.cpp:200] relu1 needs backward computation.
+I0805 12:42:55.623946  8884 net.cpp:200] bn1 needs backward computation.
+I0805 12:42:55.623950  8884 net.cpp:200] conv1 needs backward computation.
+I0805 12:42:55.623955  8884 net.cpp:202] label_silence does not need backward computation.
+I0805 12:42:55.623960  8884 net.cpp:202] label_raw_label_slice_0_split does not need backward computation.
+I0805 12:42:55.623965  8884 net.cpp:202] raw_label_slice does not need backward computation.
+I0805 12:42:55.623970  8884 net.cpp:202] data does not need backward computation.
+I0805 12:42:55.623981  8884 net.cpp:244] This network produces output acc_train
+I0805 12:42:55.623986  8884 net.cpp:244] This network produces output softmax_loss
+I0805 12:42:55.624022  8884 net.cpp:257] Network initialization done.
+I0805 12:42:55.628157  8884 solver.cpp:173] Creating test net (#0) specified by net file: train20.prototxt
+I0805 12:42:55.628239  8884 net.cpp:296] The NetState phase (1) differed from the phase (0) specified by a rule in layer data
+I0805 12:42:55.628249  8884 net.cpp:296] The NetState phase (1) differed from the phase (0) specified by a rule in layer raw_label_slice
+I0805 12:42:55.628253  8884 net.cpp:296] The NetState phase (1) differed from the phase (0) specified by a rule in layer label_silence
+I0805 12:42:55.628278  8884 net.cpp:296] The NetState phase (1) differed from the phase (0) specified by a rule in layer softmax_loss
+I0805 12:42:55.628285  8884 net.cpp:296] The NetState phase (1) differed from the phase (0) specified by a rule in layer acc_train
+I0805 12:42:55.628558  8884 net.cpp:53] Initializing net from parameters: 
+name: "CaffeNet"
+state {
+  phase: TEST
+}
+layer {
+  name: "data"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+  include {
+    phase: TEST
+  }
+  transform_param {
+    mirror: false
+  }
+  image_data_param {
+    source: "180709_alnum_test.list"
+    batch_size: 12
+    shuffle: true
+    new_height: 32
+    new_width: 32
+    is_color: false
+  }
+}
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    kernel_size: 5
+    stride: 2
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn1"
+  type: "BN"
+  bottom: "conv1"
+  top: "scale1"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "scale1"
+  top: "scale1"
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "scale1"
+  top: "conv2"
+  convolution_param {
+    num_output: 64
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn2"
+  type: "BN"
+  bottom: "conv2"
+  top: "scale2"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "scale2"
+  top: "scale2"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "scale2"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 2
+    stride: 2
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv3"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    pad: 0
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn3"
+  type: "BN"
+  bottom: "conv3"
+  top: "scale3"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "scale3"
+  top: "scale3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "scale3"
+  top: "conv4"
+  convolution_param {
+    num_output: 64
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn4"
+  type: "BN"
+  bottom: "conv4"
+  top: "scale4"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "scale4"
+  top: "scale4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv5"
+  convolution_param {
+    num_output: 32
+    bias_term: false
+    pad: 0
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn5"
+  type: "BN"
+  bottom: "conv5"
+  top: "scale5"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "scale5"
+  top: "scale5"
+}
+layer {
+  name: "concat1"
+  type: "Concat"
+  bottom: "scale5"
+  bottom: "scale4"
+  top: "concat1"
+}
+layer {
+  name: "conv6"
+  type: "Convolution"
+  bottom: "concat1"
+  top: "conv6"
+  convolution_param {
+    num_output: 96
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn6"
+  type: "BN"
+  bottom: "conv6"
+  top: "scale6"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "scale6"
+  top: "scale6"
+}
+layer {
+  name: "conv7"
+  type: "Convolution"
+  bottom: "scale6"
+  top: "conv7"
+  convolution_param {
+    num_output: 48
+    bias_term: false
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn7"
+  type: "BN"
+  bottom: "conv7"
+  top: "scale7"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "scale7"
+  top: "scale7"
+}
+layer {
+  name: "conv8"
+  type: "Convolution"
+  bottom: "scale7"
+  top: "conv8"
+  convolution_param {
+    num_output: 96
+    bias_term: false
+    pad: 1
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn8"
+  type: "BN"
+  bottom: "conv8"
+  top: "scale8"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu8"
+  type: "ReLU"
+  bottom: "scale8"
+  top: "scale8"
+}
+layer {
+  name: "conv9"
+  type: "Convolution"
+  bottom: "scale6"
+  top: "conv9"
+  convolution_param {
+    num_output: 48
+    bias_term: false
+    kernel_size: 1
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn9"
+  type: "BN"
+  bottom: "conv9"
+  top: "scale9"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu9"
+  type: "ReLU"
+  bottom: "scale9"
+  top: "scale9"
+}
+layer {
+  name: "concat2"
+  type: "Concat"
+  bottom: "scale9"
+  bottom: "scale8"
+  top: "pool3"
+}
+layer {
+  name: "conv10"
+  type: "Convolution"
+  bottom: "pool3"
+  top: "conv10"
+  convolution_param {
+    num_output: 128
+    bias_term: false
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "bn10"
+  type: "BN"
+  bottom: "conv10"
+  top: "scale10"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "relu10"
+  type: "ReLU"
+  bottom: "scale10"
+  top: "scale10"
+}
+layer {
+  name: "conv11"
+  type: "Convolution"
+  bottom: "scale10"
+  top: "conv11"
+  convolution_param {
+    num_output: 256
+    kernel_size: 3
+    stride: 1
+    weight_filler {
+      type: "msra"
+    }
+  }
+}
+layer {
+  name: "conv11_bn"
+  type: "BN"
+  bottom: "conv11"
+  top: "conv11_bn"
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  param {
+    lr_mult: 1.00001
+    decay_mult: 0
+  }
+  bn_param {
+    scale_filler {
+      type: "constant"
+      value: 1
+    }
+    shift_filler {
+      type: "constant"
+      value: 0.001
+    }
+  }
+}
+layer {
+  name: "pool4"
+  type: "Pooling"
+  bottom: "conv11_bn"
+  top: "pool4"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 3
+  }
+}
+layer {
+  name: "fc5"
+  type: "InnerProduct"
+  bottom: "pool4"
+  top: "fc5"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 2048
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "fc5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 62
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+layer {
+  name: "acc_test"
+  type: "Accuracy"
+  bottom: "fc6"
+  bottom: "label"
+  top: "acc_test"
+  include {
+    phase: TEST
+  }
+}
+I0805 12:42:55.628743  8884 layer_factory.hpp:77] Creating layer data
+I0805 12:42:55.628768  8884 net.cpp:86] Creating Layer data
+I0805 12:42:55.628777  8884 net.cpp:382] data -> data
+I0805 12:42:55.628785  8884 net.cpp:382] data -> label
+I0805 12:42:55.628810  8884 image_data_layer.cpp:68] Opening file 180709_alnum_test.list
+I0805 12:42:55.629873  8884 image_data_layer.cpp:90] Shuffling data
+I0805 12:42:55.629910  8884 image_data_layer.cpp:100] A total of 1182 images.
+I0805 12:42:55.630170  8884 image_data_layer.cpp:127] output data size: 12,1,32,32
+I0805 12:42:55.630209  8884 image_data_layer.cpp:135] top[1]->num_axes: 2
+I0805 12:42:55.630738  8884 net.cpp:124] Setting up data
+I0805 12:42:55.630753  8884 net.cpp:131] Top shape: 12 1 32 32 (12288)
+I0805 12:42:55.630759  8884 net.cpp:131] Top shape: 12 1 (12)
+I0805 12:42:55.630762  8884 net.cpp:139] Memory required for data: 49200
+I0805 12:42:55.630766  8884 layer_factory.hpp:77] Creating layer conv1
+I0805 12:42:55.630812  8884 net.cpp:86] Creating Layer conv1
+I0805 12:42:55.630820  8884 net.cpp:408] conv1 <- data
+I0805 12:42:55.630827  8884 net.cpp:382] conv1 -> conv1
+I0805 12:42:55.633077  8884 net.cpp:124] Setting up conv1
+I0805 12:42:55.633097  8884 net.cpp:131] Top shape: 12 32 14 14 (75264)
+I0805 12:42:55.633102  8884 net.cpp:139] Memory required for data: 350256
+I0805 12:42:55.633111  8884 layer_factory.hpp:77] Creating layer bn1
+I0805 12:42:55.633123  8884 net.cpp:86] Creating Layer bn1
+I0805 12:42:55.633128  8884 net.cpp:408] bn1 <- conv1
+I0805 12:42:55.633134  8884 net.cpp:382] bn1 -> scale1
+I0805 12:42:55.633519  8884 net.cpp:124] Setting up bn1
+I0805 12:42:55.633530  8884 net.cpp:131] Top shape: 12 32 14 14 (75264)
+I0805 12:42:55.633534  8884 net.cpp:139] Memory required for data: 651312
+I0805 12:42:55.633548  8884 layer_factory.hpp:77] Creating layer relu1
+I0805 12:42:55.633553  8884 net.cpp:86] Creating Layer relu1
+I0805 12:42:55.633558  8884 net.cpp:408] relu1 <- scale1
+I0805 12:42:55.633566  8884 net.cpp:369] relu1 -> scale1 (in-place)
+I0805 12:42:55.633914  8884 net.cpp:124] Setting up relu1
+I0805 12:42:55.633929  8884 net.cpp:131] Top shape: 12 32 14 14 (75264)
+I0805 12:42:55.633932  8884 net.cpp:139] Memory required for data: 952368
+I0805 12:42:55.633936  8884 layer_factory.hpp:77] Creating layer conv2
+I0805 12:42:55.633949  8884 net.cpp:86] Creating Layer conv2
+I0805 12:42:55.633952  8884 net.cpp:408] conv2 <- scale1
+I0805 12:42:55.633960  8884 net.cpp:382] conv2 -> conv2
+I0805 12:42:55.636713  8884 net.cpp:124] Setting up conv2
+I0805 12:42:55.636734  8884 net.cpp:131] Top shape: 12 64 14 14 (150528)
+I0805 12:42:55.636739  8884 net.cpp:139] Memory required for data: 1554480
+I0805 12:42:55.636759  8884 layer_factory.hpp:77] Creating layer bn2
+I0805 12:42:55.636771  8884 net.cpp:86] Creating Layer bn2
+I0805 12:42:55.636775  8884 net.cpp:408] bn2 <- conv2
+I0805 12:42:55.636785  8884 net.cpp:382] bn2 -> scale2
+I0805 12:42:55.637161  8884 net.cpp:124] Setting up bn2
+I0805 12:42:55.637171  8884 net.cpp:131] Top shape: 12 64 14 14 (150528)
+I0805 12:42:55.637176  8884 net.cpp:139] Memory required for data: 2156592
+I0805 12:42:55.637188  8884 layer_factory.hpp:77] Creating layer relu2
+I0805 12:42:55.637194  8884 net.cpp:86] Creating Layer relu2
+I0805 12:42:55.637199  8884 net.cpp:408] relu2 <- scale2
+I0805 12:42:55.637204  8884 net.cpp:369] relu2 -> scale2 (in-place)
+I0805 12:42:55.637822  8884 net.cpp:124] Setting up relu2
+I0805 12:42:55.637842  8884 net.cpp:131] Top shape: 12 64 14 14 (150528)
+I0805 12:42:55.637847  8884 net.cpp:139] Memory required for data: 2758704
+I0805 12:42:55.637851  8884 layer_factory.hpp:77] Creating layer pool1
+I0805 12:42:55.637861  8884 net.cpp:86] Creating Layer pool1
+I0805 12:42:55.637866  8884 net.cpp:408] pool1 <- scale2
+I0805 12:42:55.637883  8884 net.cpp:382] pool1 -> pool1
+I0805 12:42:55.637955  8884 net.cpp:124] Setting up pool1
+I0805 12:42:55.637969  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.637974  8884 net.cpp:139] Memory required for data: 2909232
+I0805 12:42:55.637977  8884 layer_factory.hpp:77] Creating layer pool1_pool1_0_split
+I0805 12:42:55.637989  8884 net.cpp:86] Creating Layer pool1_pool1_0_split
+I0805 12:42:55.637995  8884 net.cpp:408] pool1_pool1_0_split <- pool1
+I0805 12:42:55.638000  8884 net.cpp:382] pool1_pool1_0_split -> pool1_pool1_0_split_0
+I0805 12:42:55.638008  8884 net.cpp:382] pool1_pool1_0_split -> pool1_pool1_0_split_1
+I0805 12:42:55.638062  8884 net.cpp:124] Setting up pool1_pool1_0_split
+I0805 12:42:55.638072  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.638077  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.638082  8884 net.cpp:139] Memory required for data: 3210288
+I0805 12:42:55.638085  8884 layer_factory.hpp:77] Creating layer conv3
+I0805 12:42:55.638095  8884 net.cpp:86] Creating Layer conv3
+I0805 12:42:55.638101  8884 net.cpp:408] conv3 <- pool1_pool1_0_split_0
+I0805 12:42:55.638110  8884 net.cpp:382] conv3 -> conv3
+I0805 12:42:55.639972  8884 net.cpp:124] Setting up conv3
+I0805 12:42:55.639991  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.639997  8884 net.cpp:139] Memory required for data: 3285552
+I0805 12:42:55.640002  8884 layer_factory.hpp:77] Creating layer bn3
+I0805 12:42:55.640019  8884 net.cpp:86] Creating Layer bn3
+I0805 12:42:55.640024  8884 net.cpp:408] bn3 <- conv3
+I0805 12:42:55.640034  8884 net.cpp:382] bn3 -> scale3
+I0805 12:42:55.640408  8884 net.cpp:124] Setting up bn3
+I0805 12:42:55.640421  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.640424  8884 net.cpp:139] Memory required for data: 3360816
+I0805 12:42:55.640434  8884 layer_factory.hpp:77] Creating layer relu3
+I0805 12:42:55.640439  8884 net.cpp:86] Creating Layer relu3
+I0805 12:42:55.640444  8884 net.cpp:408] relu3 <- scale3
+I0805 12:42:55.640450  8884 net.cpp:369] relu3 -> scale3 (in-place)
+I0805 12:42:55.640997  8884 net.cpp:124] Setting up relu3
+I0805 12:42:55.641016  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.641021  8884 net.cpp:139] Memory required for data: 3436080
+I0805 12:42:55.641024  8884 layer_factory.hpp:77] Creating layer conv4
+I0805 12:42:55.641036  8884 net.cpp:86] Creating Layer conv4
+I0805 12:42:55.641041  8884 net.cpp:408] conv4 <- scale3
+I0805 12:42:55.641049  8884 net.cpp:382] conv4 -> conv4
+I0805 12:42:55.643298  8884 net.cpp:124] Setting up conv4
+I0805 12:42:55.643317  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.643321  8884 net.cpp:139] Memory required for data: 3586608
+I0805 12:42:55.643328  8884 layer_factory.hpp:77] Creating layer bn4
+I0805 12:42:55.643338  8884 net.cpp:86] Creating Layer bn4
+I0805 12:42:55.643342  8884 net.cpp:408] bn4 <- conv4
+I0805 12:42:55.643354  8884 net.cpp:382] bn4 -> scale4
+I0805 12:42:55.643715  8884 net.cpp:124] Setting up bn4
+I0805 12:42:55.643728  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.643731  8884 net.cpp:139] Memory required for data: 3737136
+I0805 12:42:55.643744  8884 layer_factory.hpp:77] Creating layer relu4
+I0805 12:42:55.643752  8884 net.cpp:86] Creating Layer relu4
+I0805 12:42:55.643757  8884 net.cpp:408] relu4 <- scale4
+I0805 12:42:55.643762  8884 net.cpp:369] relu4 -> scale4 (in-place)
+I0805 12:42:55.644256  8884 net.cpp:124] Setting up relu4
+I0805 12:42:55.644273  8884 net.cpp:131] Top shape: 12 64 7 7 (37632)
+I0805 12:42:55.644279  8884 net.cpp:139] Memory required for data: 3887664
+I0805 12:42:55.644282  8884 layer_factory.hpp:77] Creating layer conv5
+I0805 12:42:55.644294  8884 net.cpp:86] Creating Layer conv5
+I0805 12:42:55.644297  8884 net.cpp:408] conv5 <- pool1_pool1_0_split_1
+I0805 12:42:55.644306  8884 net.cpp:382] conv5 -> conv5
+I0805 12:42:55.645965  8884 net.cpp:124] Setting up conv5
+I0805 12:42:55.645984  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.645989  8884 net.cpp:139] Memory required for data: 3962928
+I0805 12:42:55.645997  8884 layer_factory.hpp:77] Creating layer bn5
+I0805 12:42:55.646013  8884 net.cpp:86] Creating Layer bn5
+I0805 12:42:55.646018  8884 net.cpp:408] bn5 <- conv5
+I0805 12:42:55.646023  8884 net.cpp:382] bn5 -> scale5
+I0805 12:42:55.646375  8884 net.cpp:124] Setting up bn5
+I0805 12:42:55.646385  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.646389  8884 net.cpp:139] Memory required for data: 4038192
+I0805 12:42:55.646399  8884 layer_factory.hpp:77] Creating layer relu5
+I0805 12:42:55.646404  8884 net.cpp:86] Creating Layer relu5
+I0805 12:42:55.646407  8884 net.cpp:408] relu5 <- scale5
+I0805 12:42:55.646414  8884 net.cpp:369] relu5 -> scale5 (in-place)
+I0805 12:42:55.646925  8884 net.cpp:124] Setting up relu5
+I0805 12:42:55.646944  8884 net.cpp:131] Top shape: 12 32 7 7 (18816)
+I0805 12:42:55.646947  8884 net.cpp:139] Memory required for data: 4113456
+I0805 12:42:55.646951  8884 layer_factory.hpp:77] Creating layer concat1
+I0805 12:42:55.646961  8884 net.cpp:86] Creating Layer concat1
+I0805 12:42:55.646966  8884 net.cpp:408] concat1 <- scale5
+I0805 12:42:55.646971  8884 net.cpp:408] concat1 <- scale4
+I0805 12:42:55.646976  8884 net.cpp:382] concat1 -> concat1
+I0805 12:42:55.647020  8884 net.cpp:124] Setting up concat1
+I0805 12:42:55.647030  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.647034  8884 net.cpp:139] Memory required for data: 4339248
+I0805 12:42:55.647037  8884 layer_factory.hpp:77] Creating layer conv6
+I0805 12:42:55.647047  8884 net.cpp:86] Creating Layer conv6
+I0805 12:42:55.647053  8884 net.cpp:408] conv6 <- concat1
+I0805 12:42:55.647059  8884 net.cpp:382] conv6 -> conv6
+I0805 12:42:55.651787  8884 net.cpp:124] Setting up conv6
+I0805 12:42:55.651806  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.651811  8884 net.cpp:139] Memory required for data: 4565040
+I0805 12:42:55.651818  8884 layer_factory.hpp:77] Creating layer bn6
+I0805 12:42:55.651827  8884 net.cpp:86] Creating Layer bn6
+I0805 12:42:55.651832  8884 net.cpp:408] bn6 <- conv6
+I0805 12:42:55.651841  8884 net.cpp:382] bn6 -> scale6
+I0805 12:42:55.652197  8884 net.cpp:124] Setting up bn6
+I0805 12:42:55.652209  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.652212  8884 net.cpp:139] Memory required for data: 4790832
+I0805 12:42:55.652221  8884 layer_factory.hpp:77] Creating layer relu6
+I0805 12:42:55.652227  8884 net.cpp:86] Creating Layer relu6
+I0805 12:42:55.652231  8884 net.cpp:408] relu6 <- scale6
+I0805 12:42:55.652236  8884 net.cpp:369] relu6 -> scale6 (in-place)
+I0805 12:42:55.652534  8884 net.cpp:124] Setting up relu6
+I0805 12:42:55.652547  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.652559  8884 net.cpp:139] Memory required for data: 5016624
+I0805 12:42:55.652562  8884 layer_factory.hpp:77] Creating layer scale6_relu6_0_split
+I0805 12:42:55.652570  8884 net.cpp:86] Creating Layer scale6_relu6_0_split
+I0805 12:42:55.652586  8884 net.cpp:408] scale6_relu6_0_split <- scale6
+I0805 12:42:55.652595  8884 net.cpp:382] scale6_relu6_0_split -> scale6_relu6_0_split_0
+I0805 12:42:55.652603  8884 net.cpp:382] scale6_relu6_0_split -> scale6_relu6_0_split_1
+I0805 12:42:55.652665  8884 net.cpp:124] Setting up scale6_relu6_0_split
+I0805 12:42:55.652678  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.652683  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.652686  8884 net.cpp:139] Memory required for data: 5468208
+I0805 12:42:55.652690  8884 layer_factory.hpp:77] Creating layer conv7
+I0805 12:42:55.652698  8884 net.cpp:86] Creating Layer conv7
+I0805 12:42:55.652703  8884 net.cpp:408] conv7 <- scale6_relu6_0_split_0
+I0805 12:42:55.652710  8884 net.cpp:382] conv7 -> conv7
+I0805 12:42:55.654481  8884 net.cpp:124] Setting up conv7
+I0805 12:42:55.654502  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.654507  8884 net.cpp:139] Memory required for data: 5581104
+I0805 12:42:55.654515  8884 layer_factory.hpp:77] Creating layer bn7
+I0805 12:42:55.654525  8884 net.cpp:86] Creating Layer bn7
+I0805 12:42:55.654530  8884 net.cpp:408] bn7 <- conv7
+I0805 12:42:55.654536  8884 net.cpp:382] bn7 -> scale7
+I0805 12:42:55.654889  8884 net.cpp:124] Setting up bn7
+I0805 12:42:55.654901  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.654904  8884 net.cpp:139] Memory required for data: 5694000
+I0805 12:42:55.654917  8884 layer_factory.hpp:77] Creating layer relu7
+I0805 12:42:55.654925  8884 net.cpp:86] Creating Layer relu7
+I0805 12:42:55.654929  8884 net.cpp:408] relu7 <- scale7
+I0805 12:42:55.654935  8884 net.cpp:369] relu7 -> scale7 (in-place)
+I0805 12:42:55.655441  8884 net.cpp:124] Setting up relu7
+I0805 12:42:55.655458  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.655463  8884 net.cpp:139] Memory required for data: 5806896
+I0805 12:42:55.655467  8884 layer_factory.hpp:77] Creating layer conv8
+I0805 12:42:55.655478  8884 net.cpp:86] Creating Layer conv8
+I0805 12:42:55.655483  8884 net.cpp:408] conv8 <- scale7
+I0805 12:42:55.655491  8884 net.cpp:382] conv8 -> conv8
+I0805 12:42:55.658768  8884 net.cpp:124] Setting up conv8
+I0805 12:42:55.658789  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.658794  8884 net.cpp:139] Memory required for data: 6032688
+I0805 12:42:55.658802  8884 layer_factory.hpp:77] Creating layer bn8
+I0805 12:42:55.658809  8884 net.cpp:86] Creating Layer bn8
+I0805 12:42:55.658814  8884 net.cpp:408] bn8 <- conv8
+I0805 12:42:55.658823  8884 net.cpp:382] bn8 -> scale8
+I0805 12:42:55.659186  8884 net.cpp:124] Setting up bn8
+I0805 12:42:55.659198  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.659201  8884 net.cpp:139] Memory required for data: 6258480
+I0805 12:42:55.659209  8884 layer_factory.hpp:77] Creating layer relu8
+I0805 12:42:55.659215  8884 net.cpp:86] Creating Layer relu8
+I0805 12:42:55.659219  8884 net.cpp:408] relu8 <- scale8
+I0805 12:42:55.659226  8884 net.cpp:369] relu8 -> scale8 (in-place)
+I0805 12:42:55.659526  8884 net.cpp:124] Setting up relu8
+I0805 12:42:55.659540  8884 net.cpp:131] Top shape: 12 96 7 7 (56448)
+I0805 12:42:55.659544  8884 net.cpp:139] Memory required for data: 6484272
+I0805 12:42:55.659548  8884 layer_factory.hpp:77] Creating layer conv9
+I0805 12:42:55.659559  8884 net.cpp:86] Creating Layer conv9
+I0805 12:42:55.659564  8884 net.cpp:408] conv9 <- scale6_relu6_0_split_1
+I0805 12:42:55.659572  8884 net.cpp:382] conv9 -> conv9
+I0805 12:42:55.661345  8884 net.cpp:124] Setting up conv9
+I0805 12:42:55.661363  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.661367  8884 net.cpp:139] Memory required for data: 6597168
+I0805 12:42:55.661375  8884 layer_factory.hpp:77] Creating layer bn9
+I0805 12:42:55.661384  8884 net.cpp:86] Creating Layer bn9
+I0805 12:42:55.661389  8884 net.cpp:408] bn9 <- conv9
+I0805 12:42:55.661396  8884 net.cpp:382] bn9 -> scale9
+I0805 12:42:55.661761  8884 net.cpp:124] Setting up bn9
+I0805 12:42:55.661772  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.661777  8884 net.cpp:139] Memory required for data: 6710064
+I0805 12:42:55.661798  8884 layer_factory.hpp:77] Creating layer relu9
+I0805 12:42:55.661808  8884 net.cpp:86] Creating Layer relu9
+I0805 12:42:55.661811  8884 net.cpp:408] relu9 <- scale9
+I0805 12:42:55.661816  8884 net.cpp:369] relu9 -> scale9 (in-place)
+I0805 12:42:55.662325  8884 net.cpp:124] Setting up relu9
+I0805 12:42:55.662343  8884 net.cpp:131] Top shape: 12 48 7 7 (28224)
+I0805 12:42:55.662348  8884 net.cpp:139] Memory required for data: 6822960
+I0805 12:42:55.662351  8884 layer_factory.hpp:77] Creating layer concat2
+I0805 12:42:55.662361  8884 net.cpp:86] Creating Layer concat2
+I0805 12:42:55.662369  8884 net.cpp:408] concat2 <- scale9
+I0805 12:42:55.662375  8884 net.cpp:408] concat2 <- scale8
+I0805 12:42:55.662381  8884 net.cpp:382] concat2 -> pool3
+I0805 12:42:55.662423  8884 net.cpp:124] Setting up concat2
+I0805 12:42:55.662432  8884 net.cpp:131] Top shape: 12 144 7 7 (84672)
+I0805 12:42:55.662436  8884 net.cpp:139] Memory required for data: 7161648
+I0805 12:42:55.662441  8884 layer_factory.hpp:77] Creating layer conv10
+I0805 12:42:55.662453  8884 net.cpp:86] Creating Layer conv10
+I0805 12:42:55.662459  8884 net.cpp:408] conv10 <- pool3
+I0805 12:42:55.662466  8884 net.cpp:382] conv10 -> conv10
+I0805 12:42:55.670836  8884 net.cpp:124] Setting up conv10
+I0805 12:42:55.670857  8884 net.cpp:131] Top shape: 12 128 5 5 (38400)
+I0805 12:42:55.670862  8884 net.cpp:139] Memory required for data: 7315248
+I0805 12:42:55.670869  8884 layer_factory.hpp:77] Creating layer bn10
+I0805 12:42:55.670879  8884 net.cpp:86] Creating Layer bn10
+I0805 12:42:55.670884  8884 net.cpp:408] bn10 <- conv10
+I0805 12:42:55.670892  8884 net.cpp:382] bn10 -> scale10
+I0805 12:42:55.671238  8884 net.cpp:124] Setting up bn10
+I0805 12:42:55.671249  8884 net.cpp:131] Top shape: 12 128 5 5 (38400)
+I0805 12:42:55.671253  8884 net.cpp:139] Memory required for data: 7468848
+I0805 12:42:55.671262  8884 layer_factory.hpp:77] Creating layer relu10
+I0805 12:42:55.671268  8884 net.cpp:86] Creating Layer relu10
+I0805 12:42:55.671272  8884 net.cpp:408] relu10 <- scale10
+I0805 12:42:55.671279  8884 net.cpp:369] relu10 -> scale10 (in-place)
+I0805 12:42:55.671797  8884 net.cpp:124] Setting up relu10
+I0805 12:42:55.671813  8884 net.cpp:131] Top shape: 12 128 5 5 (38400)
+I0805 12:42:55.671818  8884 net.cpp:139] Memory required for data: 7622448
+I0805 12:42:55.671823  8884 layer_factory.hpp:77] Creating layer conv11
+I0805 12:42:55.671836  8884 net.cpp:86] Creating Layer conv11
+I0805 12:42:55.671841  8884 net.cpp:408] conv11 <- scale10
+I0805 12:42:55.671850  8884 net.cpp:382] conv11 -> conv11
+I0805 12:42:55.684890  8884 net.cpp:124] Setting up conv11
+I0805 12:42:55.684911  8884 net.cpp:131] Top shape: 12 256 3 3 (27648)
+I0805 12:42:55.684916  8884 net.cpp:139] Memory required for data: 7733040
+I0805 12:42:55.684924  8884 layer_factory.hpp:77] Creating layer conv11_bn
+I0805 12:42:55.684936  8884 net.cpp:86] Creating Layer conv11_bn
+I0805 12:42:55.684940  8884 net.cpp:408] conv11_bn <- conv11
+I0805 12:42:55.684948  8884 net.cpp:382] conv11_bn -> conv11_bn
+I0805 12:42:55.685300  8884 net.cpp:124] Setting up conv11_bn
+I0805 12:42:55.685312  8884 net.cpp:131] Top shape: 12 256 3 3 (27648)
+I0805 12:42:55.685315  8884 net.cpp:139] Memory required for data: 7843632
+I0805 12:42:55.685324  8884 layer_factory.hpp:77] Creating layer pool4
+I0805 12:42:55.685333  8884 net.cpp:86] Creating Layer pool4
+I0805 12:42:55.685338  8884 net.cpp:408] pool4 <- conv11_bn
+I0805 12:42:55.685343  8884 net.cpp:382] pool4 -> pool4
+I0805 12:42:55.685408  8884 net.cpp:124] Setting up pool4
+I0805 12:42:55.685418  8884 net.cpp:131] Top shape: 12 256 1 1 (3072)
+I0805 12:42:55.685422  8884 net.cpp:139] Memory required for data: 7855920
+I0805 12:42:55.685426  8884 layer_factory.hpp:77] Creating layer fc5
+I0805 12:42:55.685436  8884 net.cpp:86] Creating Layer fc5
+I0805 12:42:55.685441  8884 net.cpp:408] fc5 <- pool4
+I0805 12:42:55.685447  8884 net.cpp:382] fc5 -> fc5
+I0805 12:42:55.690866  8884 net.cpp:124] Setting up fc5
+I0805 12:42:55.690886  8884 net.cpp:131] Top shape: 12 2048 (24576)
+I0805 12:42:55.690902  8884 net.cpp:139] Memory required for data: 7954224
+I0805 12:42:55.690910  8884 layer_factory.hpp:77] Creating layer fc6
+I0805 12:42:55.690919  8884 net.cpp:86] Creating Layer fc6
+I0805 12:42:55.690923  8884 net.cpp:408] fc6 <- fc5
+I0805 12:42:55.690932  8884 net.cpp:382] fc6 -> fc6
+I0805 12:42:55.692809  8884 net.cpp:124] Setting up fc6
+I0805 12:42:55.692828  8884 net.cpp:131] Top shape: 12 62 (744)
+I0805 12:42:55.692832  8884 net.cpp:139] Memory required for data: 7957200
+I0805 12:42:55.692839  8884 layer_factory.hpp:77] Creating layer acc_test
+I0805 12:42:55.692849  8884 net.cpp:86] Creating Layer acc_test
+I0805 12:42:55.692854  8884 net.cpp:408] acc_test <- fc6
+I0805 12:42:55.692859  8884 net.cpp:408] acc_test <- label
+I0805 12:42:55.692865  8884 net.cpp:382] acc_test -> acc_test
+I0805 12:42:55.692878  8884 net.cpp:124] Setting up acc_test
+I0805 12:42:55.692888  8884 net.cpp:131] Top shape: (1)
+I0805 12:42:55.692891  8884 net.cpp:139] Memory required for data: 7957204
+I0805 12:42:55.692895  8884 net.cpp:202] acc_test does not need backward computation.
+I0805 12:42:55.692900  8884 net.cpp:202] fc6 does not need backward computation.
+I0805 12:42:55.692904  8884 net.cpp:202] fc5 does not need backward computation.
+I0805 12:42:55.692908  8884 net.cpp:202] pool4 does not need backward computation.
+I0805 12:42:55.692911  8884 net.cpp:202] conv11_bn does not need backward computation.
+I0805 12:42:55.692915  8884 net.cpp:202] conv11 does not need backward computation.
+I0805 12:42:55.692920  8884 net.cpp:202] relu10 does not need backward computation.
+I0805 12:42:55.692924  8884 net.cpp:202] bn10 does not need backward computation.
+I0805 12:42:55.692927  8884 net.cpp:202] conv10 does not need backward computation.
+I0805 12:42:55.692931  8884 net.cpp:202] concat2 does not need backward computation.
+I0805 12:42:55.692936  8884 net.cpp:202] relu9 does not need backward computation.
+I0805 12:42:55.692939  8884 net.cpp:202] bn9 does not need backward computation.
+I0805 12:42:55.692943  8884 net.cpp:202] conv9 does not need backward computation.
+I0805 12:42:55.692948  8884 net.cpp:202] relu8 does not need backward computation.
+I0805 12:42:55.692951  8884 net.cpp:202] bn8 does not need backward computation.
+I0805 12:42:55.692955  8884 net.cpp:202] conv8 does not need backward computation.
+I0805 12:42:55.692960  8884 net.cpp:202] relu7 does not need backward computation.
+I0805 12:42:55.692963  8884 net.cpp:202] bn7 does not need backward computation.
+I0805 12:42:55.692967  8884 net.cpp:202] conv7 does not need backward computation.
+I0805 12:42:55.692971  8884 net.cpp:202] scale6_relu6_0_split does not need backward computation.
+I0805 12:42:55.692975  8884 net.cpp:202] relu6 does not need backward computation.
+I0805 12:42:55.692979  8884 net.cpp:202] bn6 does not need backward computation.
+I0805 12:42:55.692983  8884 net.cpp:202] conv6 does not need backward computation.
+I0805 12:42:55.692986  8884 net.cpp:202] concat1 does not need backward computation.
+I0805 12:42:55.692991  8884 net.cpp:202] relu5 does not need backward computation.
+I0805 12:42:55.692994  8884 net.cpp:202] bn5 does not need backward computation.
+I0805 12:42:55.692999  8884 net.cpp:202] conv5 does not need backward computation.
+I0805 12:42:55.693003  8884 net.cpp:202] relu4 does not need backward computation.
+I0805 12:42:55.693007  8884 net.cpp:202] bn4 does not need backward computation.
+I0805 12:42:55.693011  8884 net.cpp:202] conv4 does not need backward computation.
+I0805 12:42:55.693015  8884 net.cpp:202] relu3 does not need backward computation.
+I0805 12:42:55.693018  8884 net.cpp:202] bn3 does not need backward computation.
+I0805 12:42:55.693022  8884 net.cpp:202] conv3 does not need backward computation.
+I0805 12:42:55.693027  8884 net.cpp:202] pool1_pool1_0_split does not need backward computation.
+I0805 12:42:55.693032  8884 net.cpp:202] pool1 does not need backward computation.
+I0805 12:42:55.693035  8884 net.cpp:202] relu2 does not need backward computation.
+I0805 12:42:55.693038  8884 net.cpp:202] bn2 does not need backward computation.
+I0805 12:42:55.693055  8884 net.cpp:202] conv2 does not need backward computation.
+I0805 12:42:55.693060  8884 net.cpp:202] relu1 does not need backward computation.
+I0805 12:42:55.693063  8884 net.cpp:202] bn1 does not need backward computation.
+I0805 12:42:55.693068  8884 net.cpp:202] conv1 does not need backward computation.
+I0805 12:42:55.693073  8884 net.cpp:202] data does not need backward computation.
+I0805 12:42:55.693075  8884 net.cpp:244] This network produces output acc_test
+I0805 12:42:55.693104  8884 net.cpp:257] Network initialization done.
+I0805 12:42:55.693239  8884 solver.cpp:56] Solver scaffolding done.
+I0805 12:42:55.696485  8884 caffe.cpp:155] Finetuning from _iter_50000.caffemodel
+I0805 12:42:55.719167  8884 net.cpp:746] Ignoring source layer raw_label_slice
+I0805 12:42:55.719197  8884 net.cpp:746] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:42:55.719200  8884 net.cpp:746] Ignoring source layer label_silence
+I0805 12:42:55.720336  8884 net.cpp:746] Ignoring source layer fc6_fc6_0_split
+I0805 12:42:55.720351  8884 net.cpp:746] Ignoring source layer softmax_loss
+I0805 12:42:55.720355  8884 net.cpp:746] Ignoring source layer acc_train
+I0805 12:42:55.720432  8884 caffe.cpp:248] Starting Optimization
+I0805 12:42:55.720441  8884 solver.cpp:273] Solving CaffeNet
+I0805 12:42:55.720445  8884 solver.cpp:274] Learning Rate Policy: step
+I0805 12:42:55.723201  8884 solver.cpp:331] Iteration 0, Testing net (#0)
+I0805 12:42:55.723220  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:42:55.723225  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:42:55.723228  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:42:55.725560  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:42:55.725576  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:42:55.725580  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:42:56.023162  8884 solver.cpp:398]     Test net output #0: acc_test = 0.969167
+I0805 12:42:56.047834  8884 solver.cpp:219] Iteration 0 (-4.4348e-24 iter/s, 0.327349s/2000 iters), loss = 0.0257886
+I0805 12:42:56.047868  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:42:56.047881  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0257886 (* 1 = 0.0257886 loss)
+I0805 12:42:56.047896  8884 sgd_solver.cpp:105] Iteration 0, lr = 0.0001
+I0805 12:43:22.124406  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_2000.caffemodel
+I0805 12:43:22.170585  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_2000.solverstate
+I0805 12:43:22.185612  8884 solver.cpp:331] Iteration 2000, Testing net (#0)
+I0805 12:43:22.185650  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:43:22.185657  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:43:22.185662  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:43:22.185705  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:43:22.185715  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:43:22.185720  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:43:22.450928  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 12:43:22.462559  8884 solver.cpp:219] Iteration 2000 (75.715 iter/s, 26.4148s/2000 iters), loss = 0.00912924
+I0805 12:43:22.462597  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:43:22.462607  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00912928 (* 1 = 0.00912928 loss)
+I0805 12:43:22.462613  8884 sgd_solver.cpp:105] Iteration 2000, lr = 0.0001
+I0805 12:43:48.675624  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_4000.caffemodel
+I0805 12:43:48.698598  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_4000.solverstate
+I0805 12:43:48.707156  8884 solver.cpp:331] Iteration 4000, Testing net (#0)
+I0805 12:43:48.707190  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:43:48.707193  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:43:48.707196  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:43:48.707239  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:43:48.707244  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:43:48.707247  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:43:48.954288  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965833
+I0805 12:43:48.965867  8884 solver.cpp:219] Iteration 4000 (75.4617 iter/s, 26.5035s/2000 iters), loss = 0.00147912
+I0805 12:43:48.965904  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:43:48.965914  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00147911 (* 1 = 0.00147911 loss)
+I0805 12:43:48.965921  8884 sgd_solver.cpp:105] Iteration 4000, lr = 0.0001
+I0805 12:44:17.630990  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_6000.caffemodel
+I0805 12:44:17.761816  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_6000.solverstate
+I0805 12:44:17.823582  8884 solver.cpp:331] Iteration 6000, Testing net (#0)
+I0805 12:44:17.823707  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:44:17.823750  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:44:17.823758  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:44:17.823845  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:44:17.823856  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:44:17.823863  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:44:18.159837  8884 solver.cpp:398]     Test net output #0: acc_test = 0.964166
+I0805 12:44:18.172835  8884 solver.cpp:219] Iteration 6000 (68.4764 iter/s, 29.2071s/2000 iters), loss = 0.0315353
+I0805 12:44:18.172875  8884 solver.cpp:238]     Train net output #0: acc_train = 0.967742
+I0805 12:44:18.172889  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0315353 (* 1 = 0.0315353 loss)
+I0805 12:44:18.172897  8884 sgd_solver.cpp:105] Iteration 6000, lr = 0.0001
+I0805 12:44:46.584024  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_8000.caffemodel
+I0805 12:44:46.682516  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_8000.solverstate
+I0805 12:44:46.696754  8884 solver.cpp:331] Iteration 8000, Testing net (#0)
+I0805 12:44:46.696794  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:44:46.696800  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:44:46.696806  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:44:46.696876  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:44:46.696883  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:44:46.696888  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:44:46.967595  8884 solver.cpp:398]     Test net output #0: acc_test = 0.969167
+I0805 12:44:46.980216  8884 solver.cpp:219] Iteration 8000 (69.4262 iter/s, 28.8076s/2000 iters), loss = 0.0354778
+I0805 12:44:46.980252  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:44:46.980262  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0354778 (* 1 = 0.0354778 loss)
+I0805 12:44:46.980269  8884 sgd_solver.cpp:105] Iteration 8000, lr = 0.0001
+I0805 12:45:15.532984  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_10000.caffemodel
+I0805 12:45:15.554091  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_10000.solverstate
+I0805 12:45:15.561570  8884 solver.cpp:331] Iteration 10000, Testing net (#0)
+I0805 12:45:15.561605  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:45:15.561610  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:45:15.561612  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:45:15.561656  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:45:15.561667  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:45:15.561671  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:45:15.822542  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 12:45:15.835273  8884 solver.cpp:219] Iteration 10000 (69.3115 iter/s, 28.8552s/2000 iters), loss = 0.00141174
+I0805 12:45:15.835301  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:45:15.835312  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00141178 (* 1 = 0.00141178 loss)
+I0805 12:45:15.835320  8884 sgd_solver.cpp:105] Iteration 10000, lr = 9e-05
+I0805 12:45:44.434947  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_12000.caffemodel
+I0805 12:45:44.533794  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_12000.solverstate
+I0805 12:45:44.578689  8884 solver.cpp:331] Iteration 12000, Testing net (#0)
+I0805 12:45:44.578723  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:45:44.578729  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:45:44.578734  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:45:44.578797  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:45:44.578804  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:45:44.578809  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:45:44.872031  8884 solver.cpp:398]     Test net output #0: acc_test = 0.96
+I0805 12:45:44.884572  8884 solver.cpp:219] Iteration 12000 (68.848 iter/s, 29.0495s/2000 iters), loss = 0.00330197
+I0805 12:45:44.884600  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:45:44.884611  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00330194 (* 1 = 0.00330194 loss)
+I0805 12:45:44.884619  8884 sgd_solver.cpp:105] Iteration 12000, lr = 9e-05
+I0805 12:46:13.066542  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_14000.caffemodel
+I0805 12:46:13.131896  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_14000.solverstate
+I0805 12:46:13.225746  8884 solver.cpp:331] Iteration 14000, Testing net (#0)
+I0805 12:46:13.225800  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:46:13.225809  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:46:13.225816  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:46:13.225908  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:46:13.225919  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:46:13.225924  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:46:13.573635  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:46:13.586019  8884 solver.cpp:219] Iteration 14000 (69.6824 iter/s, 28.7017s/2000 iters), loss = 0.0067223
+I0805 12:46:13.586053  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:46:13.586067  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00672231 (* 1 = 0.00672231 loss)
+I0805 12:46:13.586076  8884 sgd_solver.cpp:105] Iteration 14000, lr = 9e-05
+I0805 12:46:41.160336  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_16000.caffemodel
+I0805 12:46:41.180981  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_16000.solverstate
+I0805 12:46:41.305624  8884 solver.cpp:331] Iteration 16000, Testing net (#0)
+I0805 12:46:41.305660  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:46:41.305665  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:46:41.305667  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:46:41.305696  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:46:41.305711  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:46:41.305714  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:46:41.581101  8884 solver.cpp:398]     Test net output #0: acc_test = 0.953333
+I0805 12:46:41.593228  8884 solver.cpp:219] Iteration 16000 (71.4097 iter/s, 28.0074s/2000 iters), loss = 0.00342797
+I0805 12:46:41.593267  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:46:41.593278  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00342794 (* 1 = 0.00342794 loss)
+I0805 12:46:41.593284  8884 sgd_solver.cpp:105] Iteration 16000, lr = 9e-05
+I0805 12:47:08.951017  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_18000.caffemodel
+I0805 12:47:09.011812  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_18000.solverstate
+I0805 12:47:09.027068  8884 solver.cpp:331] Iteration 18000, Testing net (#0)
+I0805 12:47:09.027122  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:47:09.027129  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:47:09.027134  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:47:09.027359  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:47:09.027369  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:47:09.027374  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:47:09.295697  8884 solver.cpp:398]     Test net output #0: acc_test = 0.964166
+I0805 12:47:09.307765  8884 solver.cpp:219] Iteration 18000 (72.1638 iter/s, 27.7147s/2000 iters), loss = 0.00458262
+I0805 12:47:09.307803  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:47:09.307813  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00458245 (* 1 = 0.00458245 loss)
+I0805 12:47:09.307819  8884 sgd_solver.cpp:105] Iteration 18000, lr = 9e-05
+I0805 12:47:36.566215  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_20000.caffemodel
+I0805 12:47:36.587671  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_20000.solverstate
+I0805 12:47:36.596035  8884 solver.cpp:331] Iteration 20000, Testing net (#0)
+I0805 12:47:36.596067  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:47:36.596071  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:47:36.596076  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:47:36.596109  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:47:36.596117  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:47:36.596119  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:47:36.843327  8884 solver.cpp:398]     Test net output #0: acc_test = 0.96
+I0805 12:47:36.855265  8884 solver.cpp:219] Iteration 20000 (72.6014 iter/s, 27.5477s/2000 iters), loss = 0.0699134
+I0805 12:47:36.855304  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:47:36.855312  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0699134 (* 1 = 0.0699134 loss)
+I0805 12:47:36.855319  8884 sgd_solver.cpp:105] Iteration 20000, lr = 8.1e-05
+I0805 12:48:03.887516  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_22000.caffemodel
+I0805 12:48:03.926426  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_22000.solverstate
+I0805 12:48:03.942917  8884 solver.cpp:331] Iteration 22000, Testing net (#0)
+I0805 12:48:03.942962  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:48:03.942970  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:48:03.942975  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:48:03.943050  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:48:03.943058  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:48:03.943064  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:48:04.242199  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 12:48:04.254139  8884 solver.cpp:219] Iteration 22000 (72.9952 iter/s, 27.399s/2000 iters), loss = 0.0110755
+I0805 12:48:04.254169  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:48:04.254181  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0110755 (* 1 = 0.0110755 loss)
+I0805 12:48:04.254189  8884 sgd_solver.cpp:105] Iteration 22000, lr = 8.1e-05
+I0805 12:48:30.993279  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_24000.caffemodel
+I0805 12:48:31.090914  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_24000.solverstate
+I0805 12:48:31.105180  8884 solver.cpp:331] Iteration 24000, Testing net (#0)
+I0805 12:48:31.105221  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:48:31.105227  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:48:31.105233  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:48:31.105305  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:48:31.105314  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:48:31.105319  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:48:31.372472  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:48:31.384460  8884 solver.cpp:219] Iteration 24000 (73.7178 iter/s, 27.1305s/2000 iters), loss = 0.00130503
+I0805 12:48:31.384503  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:48:31.384515  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00130505 (* 1 = 0.00130505 loss)
+I0805 12:48:31.384521  8884 sgd_solver.cpp:105] Iteration 24000, lr = 8.1e-05
+I0805 12:48:58.201534  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_26000.caffemodel
+I0805 12:48:58.222038  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_26000.solverstate
+I0805 12:48:58.230144  8884 solver.cpp:331] Iteration 26000, Testing net (#0)
+I0805 12:48:58.230178  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:48:58.230183  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:48:58.230186  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:48:58.230219  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:48:58.230224  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:48:58.230227  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:48:58.477094  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:48:58.488914  8884 solver.cpp:219] Iteration 26000 (73.7882 iter/s, 27.1046s/2000 iters), loss = 0.0019454
+I0805 12:48:58.488951  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:48:58.488960  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00194553 (* 1 = 0.00194553 loss)
+I0805 12:48:58.488967  8884 sgd_solver.cpp:105] Iteration 26000, lr = 8.1e-05
+I0805 12:49:25.149489  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_28000.caffemodel
+I0805 12:49:25.177428  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_28000.solverstate
+I0805 12:49:25.232508  8884 solver.cpp:331] Iteration 28000, Testing net (#0)
+I0805 12:49:25.232573  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:49:25.232579  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:49:25.232583  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:49:25.232769  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:49:25.232775  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:49:25.232779  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:49:25.499708  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 12:49:25.511570  8884 solver.cpp:219] Iteration 28000 (74.0115 iter/s, 27.0228s/2000 iters), loss = 0.0011159
+I0805 12:49:25.511608  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:49:25.511617  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00111604 (* 1 = 0.00111604 loss)
+I0805 12:49:25.511626  8884 sgd_solver.cpp:105] Iteration 28000, lr = 8.1e-05
+I0805 12:49:52.187999  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_30000.caffemodel
+I0805 12:49:52.272646  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_30000.solverstate
+I0805 12:49:52.286793  8884 solver.cpp:331] Iteration 30000, Testing net (#0)
+I0805 12:49:52.286834  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:49:52.286841  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:49:52.286846  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:49:52.286916  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:49:52.286923  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:49:52.286929  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:49:52.548977  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 12:49:52.560710  8884 solver.cpp:219] Iteration 30000 (73.9391 iter/s, 27.0493s/2000 iters), loss = 0.00575687
+I0805 12:49:52.560750  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:49:52.560761  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00575682 (* 1 = 0.00575682 loss)
+I0805 12:49:52.560770  8884 sgd_solver.cpp:105] Iteration 30000, lr = 7.29e-05
+I0805 12:50:19.085285  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_32000.caffemodel
+I0805 12:50:19.106462  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_32000.solverstate
+I0805 12:50:19.114608  8884 solver.cpp:331] Iteration 32000, Testing net (#0)
+I0805 12:50:19.114647  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:50:19.114655  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:50:19.114658  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:50:19.114706  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:50:19.114712  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:50:19.114715  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:50:19.368347  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 12:50:19.380139  8884 solver.cpp:219] Iteration 32000 (74.5723 iter/s, 26.8196s/2000 iters), loss = 0.0879325
+I0805 12:50:19.380177  8884 solver.cpp:238]     Train net output #0: acc_train = 0.967742
+I0805 12:50:19.380187  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0879325 (* 1 = 0.0879325 loss)
+I0805 12:50:19.380204  8884 sgd_solver.cpp:105] Iteration 32000, lr = 7.29e-05
+I0805 12:50:45.774891  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_34000.caffemodel
+I0805 12:50:45.811395  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_34000.solverstate
+I0805 12:50:45.827618  8884 solver.cpp:331] Iteration 34000, Testing net (#0)
+I0805 12:50:45.827668  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:50:45.827677  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:50:45.827682  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:50:45.827736  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:50:45.827746  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:50:45.827752  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:50:46.126899  8884 solver.cpp:398]     Test net output #0: acc_test = 0.959166
+I0805 12:50:46.138689  8884 solver.cpp:219] Iteration 34000 (74.742 iter/s, 26.7587s/2000 iters), loss = 0.00230529
+I0805 12:50:46.138721  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:50:46.138734  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00230533 (* 1 = 0.00230533 loss)
+I0805 12:50:46.138743  8884 sgd_solver.cpp:105] Iteration 34000, lr = 7.29e-05
+I0805 12:51:12.511677  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_36000.caffemodel
+I0805 12:51:12.532120  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_36000.solverstate
+I0805 12:51:12.540426  8884 solver.cpp:331] Iteration 36000, Testing net (#0)
+I0805 12:51:12.540458  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:51:12.540463  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:51:12.540467  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:51:12.540521  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:51:12.540526  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:51:12.540529  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:51:12.861904  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 12:51:12.873895  8884 solver.cpp:219] Iteration 36000 (74.8073 iter/s, 26.7354s/2000 iters), loss = 0.00323245
+I0805 12:51:12.873930  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:51:12.873944  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0032325 (* 1 = 0.0032325 loss)
+I0805 12:51:12.873952  8884 sgd_solver.cpp:105] Iteration 36000, lr = 7.29e-05
+I0805 12:51:39.292119  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_38000.caffemodel
+I0805 12:51:39.312427  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_38000.solverstate
+I0805 12:51:39.320003  8884 solver.cpp:331] Iteration 38000, Testing net (#0)
+I0805 12:51:39.320041  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:51:39.320047  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:51:39.320050  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:51:39.320103  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:51:39.320106  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:51:39.320109  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:51:39.570514  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965833
+I0805 12:51:39.582208  8884 solver.cpp:219] Iteration 38000 (74.8826 iter/s, 26.7085s/2000 iters), loss = 0.0199663
+I0805 12:51:39.582248  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:51:39.582258  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0199663 (* 1 = 0.0199663 loss)
+I0805 12:51:39.582265  8884 sgd_solver.cpp:105] Iteration 38000, lr = 7.29e-05
+I0805 12:52:05.920511  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_40000.caffemodel
+I0805 12:52:05.942034  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_40000.solverstate
+I0805 12:52:05.952111  8884 solver.cpp:331] Iteration 40000, Testing net (#0)
+I0805 12:52:05.952143  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:52:05.952147  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:52:05.952152  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:52:05.952206  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:52:05.952214  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:52:05.952216  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:52:06.202224  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966667
+I0805 12:52:06.213827  8884 solver.cpp:219] Iteration 40000 (75.0983 iter/s, 26.6318s/2000 iters), loss = 0.0056394
+I0805 12:52:06.213865  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:52:06.213876  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00563938 (* 1 = 0.00563938 loss)
+I0805 12:52:06.213882  8884 sgd_solver.cpp:105] Iteration 40000, lr = 6.561e-05
+I0805 12:52:32.484511  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_42000.caffemodel
+I0805 12:52:32.521287  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_42000.solverstate
+I0805 12:52:32.534376  8884 solver.cpp:331] Iteration 42000, Testing net (#0)
+I0805 12:52:32.534421  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:52:32.534427  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:52:32.534431  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:52:32.534488  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:52:32.534493  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:52:32.534497  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:52:32.784348  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 12:52:32.796016  8884 solver.cpp:219] Iteration 42000 (75.2379 iter/s, 26.5823s/2000 iters), loss = 0.00519664
+I0805 12:52:32.796056  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:52:32.796066  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00519661 (* 1 = 0.00519661 loss)
+I0805 12:52:32.796072  8884 sgd_solver.cpp:105] Iteration 42000, lr = 6.561e-05
+I0805 12:52:59.049468  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_44000.caffemodel
+I0805 12:52:59.070359  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_44000.solverstate
+I0805 12:52:59.134328  8884 solver.cpp:331] Iteration 44000, Testing net (#0)
+I0805 12:52:59.134356  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:52:59.134359  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:52:59.134362  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:52:59.134405  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:52:59.134423  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:52:59.134426  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:52:59.401263  8884 solver.cpp:398]     Test net output #0: acc_test = 0.971666
+I0805 12:52:59.412848  8884 solver.cpp:219] Iteration 44000 (75.14 iter/s, 26.617s/2000 iters), loss = 0.00295082
+I0805 12:52:59.412878  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:52:59.412887  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00295082 (* 1 = 0.00295082 loss)
+I0805 12:52:59.412895  8884 sgd_solver.cpp:105] Iteration 44000, lr = 6.561e-05
+I0805 12:53:25.721366  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_46000.caffemodel
+I0805 12:53:25.762657  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_46000.solverstate
+I0805 12:53:25.814715  8884 solver.cpp:331] Iteration 46000, Testing net (#0)
+I0805 12:53:25.814822  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:53:25.814837  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:53:25.814846  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:53:25.814963  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:53:25.814975  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:53:25.814986  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:53:26.118752  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:53:26.130586  8884 solver.cpp:219] Iteration 46000 (74.8562 iter/s, 26.7179s/2000 iters), loss = 0.0216131
+I0805 12:53:26.130619  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:53:26.130630  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.021613 (* 1 = 0.021613 loss)
+I0805 12:53:26.130638  8884 sgd_solver.cpp:105] Iteration 46000, lr = 6.561e-05
+I0805 12:53:52.432986  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_48000.caffemodel
+I0805 12:53:52.453205  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_48000.solverstate
+I0805 12:53:52.546911  8884 solver.cpp:331] Iteration 48000, Testing net (#0)
+I0805 12:53:52.546957  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:53:52.546960  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:53:52.546963  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:53:52.546991  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:53:52.546994  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:53:52.546998  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:53:52.818404  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966667
+I0805 12:53:52.830157  8884 solver.cpp:219] Iteration 48000 (74.9071 iter/s, 26.6997s/2000 iters), loss = 0.0915538
+I0805 12:53:52.830193  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:53:52.830204  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0915538 (* 1 = 0.0915538 loss)
+I0805 12:53:52.830211  8884 sgd_solver.cpp:105] Iteration 48000, lr = 6.561e-05
+I0805 12:54:19.128393  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_50000.caffemodel
+I0805 12:54:19.149147  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_50000.solverstate
+I0805 12:54:19.164253  8884 solver.cpp:331] Iteration 50000, Testing net (#0)
+I0805 12:54:19.164288  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:54:19.164294  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:54:19.164296  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:54:19.164353  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:54:19.164367  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:54:19.164371  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:54:19.416860  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 12:54:19.428572  8884 solver.cpp:219] Iteration 50000 (75.192 iter/s, 26.5986s/2000 iters), loss = 0.00139954
+I0805 12:54:19.428611  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:54:19.428623  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00139955 (* 1 = 0.00139955 loss)
+I0805 12:54:19.428632  8884 sgd_solver.cpp:105] Iteration 50000, lr = 5.9049e-05
+I0805 12:54:45.725476  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_52000.caffemodel
+I0805 12:54:45.823220  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_52000.solverstate
+I0805 12:54:45.838452  8884 solver.cpp:331] Iteration 52000, Testing net (#0)
+I0805 12:54:45.838497  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:54:45.838505  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:54:45.838510  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:54:45.838547  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:54:45.838553  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:54:45.838558  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:54:46.104971  8884 solver.cpp:398]     Test net output #0: acc_test = 0.964167
+I0805 12:54:46.116672  8884 solver.cpp:219] Iteration 52000 (74.9393 iter/s, 26.6882s/2000 iters), loss = 0.020165
+I0805 12:54:46.116711  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:54:46.116721  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0201651 (* 1 = 0.0201651 loss)
+I0805 12:54:46.116729  8884 sgd_solver.cpp:105] Iteration 52000, lr = 5.9049e-05
+I0805 12:55:12.387523  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_54000.caffemodel
+I0805 12:55:12.423748  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_54000.solverstate
+I0805 12:55:12.450981  8884 solver.cpp:331] Iteration 54000, Testing net (#0)
+I0805 12:55:12.451027  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:55:12.451035  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:55:12.451040  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:55:12.451125  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:55:12.451133  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:55:12.451143  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:55:12.754570  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:55:12.766378  8884 solver.cpp:219] Iteration 54000 (75.0473 iter/s, 26.6499s/2000 iters), loss = 0.0500569
+I0805 12:55:12.766412  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:55:12.766423  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.050057 (* 1 = 0.050057 loss)
+I0805 12:55:12.766430  8884 sgd_solver.cpp:105] Iteration 54000, lr = 5.9049e-05
+I0805 12:55:39.050370  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_56000.caffemodel
+I0805 12:55:39.071099  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_56000.solverstate
+I0805 12:55:39.106781  8884 solver.cpp:331] Iteration 56000, Testing net (#0)
+I0805 12:55:39.106825  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:55:39.106830  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:55:39.106835  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:55:39.106863  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:55:39.106878  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:55:39.106881  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:55:39.368441  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 12:55:39.380146  8884 solver.cpp:219] Iteration 56000 (75.1486 iter/s, 26.6139s/2000 iters), loss = 0.0403415
+I0805 12:55:39.380183  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:55:39.380192  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0403415 (* 1 = 0.0403415 loss)
+I0805 12:55:39.380199  8884 sgd_solver.cpp:105] Iteration 56000, lr = 5.9049e-05
+I0805 12:56:05.654458  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_58000.caffemodel
+I0805 12:56:05.704761  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_58000.solverstate
+I0805 12:56:05.742409  8884 solver.cpp:331] Iteration 58000, Testing net (#0)
+I0805 12:56:05.742466  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:56:05.742473  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:56:05.742478  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:56:05.742700  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:56:05.742710  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:56:05.742715  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:56:06.047260  8884 solver.cpp:398]     Test net output #0: acc_test = 0.963333
+I0805 12:56:06.059191  8884 solver.cpp:219] Iteration 58000 (74.9648 iter/s, 26.6792s/2000 iters), loss = 0.0186499
+I0805 12:56:06.059224  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:56:06.059237  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0186501 (* 1 = 0.0186501 loss)
+I0805 12:56:06.059243  8884 sgd_solver.cpp:105] Iteration 58000, lr = 5.9049e-05
+I0805 12:56:32.341130  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_60000.caffemodel
+I0805 12:56:32.362007  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_60000.solverstate
+I0805 12:56:32.370168  8884 solver.cpp:331] Iteration 60000, Testing net (#0)
+I0805 12:56:32.370201  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:56:32.370205  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:56:32.370208  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:56:32.370239  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:56:32.370242  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:56:32.370256  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:56:32.620265  8884 solver.cpp:398]     Test net output #0: acc_test = 0.961667
+I0805 12:56:32.631801  8884 solver.cpp:219] Iteration 60000 (75.265 iter/s, 26.5728s/2000 iters), loss = 0.00445243
+I0805 12:56:32.631839  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:56:32.631848  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0044525 (* 1 = 0.0044525 loss)
+I0805 12:56:32.631856  8884 sgd_solver.cpp:105] Iteration 60000, lr = 5.31441e-05
+I0805 12:56:58.927162  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_62000.caffemodel
+I0805 12:56:58.968189  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_62000.solverstate
+I0805 12:56:59.029278  8884 solver.cpp:331] Iteration 62000, Testing net (#0)
+I0805 12:56:59.029332  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:56:59.029340  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:56:59.029346  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:56:59.029428  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:56:59.029438  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:56:59.029443  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:56:59.331084  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 12:56:59.342977  8884 solver.cpp:219] Iteration 62000 (74.8746 iter/s, 26.7113s/2000 iters), loss = 0.00285235
+I0805 12:56:59.343011  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:56:59.343024  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0028524 (* 1 = 0.0028524 loss)
+I0805 12:56:59.343032  8884 sgd_solver.cpp:105] Iteration 62000, lr = 5.31441e-05
+I0805 12:57:25.627408  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_64000.caffemodel
+I0805 12:57:25.695379  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_64000.solverstate
+I0805 12:57:25.714701  8884 solver.cpp:331] Iteration 64000, Testing net (#0)
+I0805 12:57:25.714743  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:57:25.714749  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:57:25.714754  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:57:25.714802  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:57:25.714809  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:57:25.714814  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:57:25.980960  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965833
+I0805 12:57:25.992600  8884 solver.cpp:219] Iteration 64000 (75.0475 iter/s, 26.6498s/2000 iters), loss = 0.00735477
+I0805 12:57:25.992638  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:57:25.992648  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00735483 (* 1 = 0.00735483 loss)
+I0805 12:57:25.992657  8884 sgd_solver.cpp:105] Iteration 64000, lr = 5.31441e-05
+I0805 12:57:52.285858  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_66000.caffemodel
+I0805 12:57:52.324633  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_66000.solverstate
+I0805 12:57:52.374456  8884 solver.cpp:331] Iteration 66000, Testing net (#0)
+I0805 12:57:52.374516  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:57:52.374526  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:57:52.374531  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:57:52.374619  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:57:52.374629  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:57:52.374644  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:57:52.643823  8884 solver.cpp:398]     Test net output #0: acc_test = 0.956667
+I0805 12:57:52.655397  8884 solver.cpp:219] Iteration 66000 (75.0105 iter/s, 26.6629s/2000 iters), loss = 0.0431892
+I0805 12:57:52.655426  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 12:57:52.655436  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0431893 (* 1 = 0.0431893 loss)
+I0805 12:57:52.655443  8884 sgd_solver.cpp:105] Iteration 66000, lr = 5.31441e-05
+I0805 12:58:18.939767  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_68000.caffemodel
+I0805 12:58:19.020195  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_68000.solverstate
+I0805 12:58:19.057745  8884 solver.cpp:331] Iteration 68000, Testing net (#0)
+I0805 12:58:19.057778  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:58:19.057785  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:58:19.057790  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:58:19.057865  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:58:19.057873  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:58:19.057878  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:58:19.342927  8884 solver.cpp:398]     Test net output #0: acc_test = 0.969167
+I0805 12:58:19.354617  8884 solver.cpp:219] Iteration 68000 (74.9081 iter/s, 26.6994s/2000 iters), loss = 0.0115029
+I0805 12:58:19.354643  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:58:19.354652  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0115031 (* 1 = 0.0115031 loss)
+I0805 12:58:19.354660  8884 sgd_solver.cpp:105] Iteration 68000, lr = 5.31441e-05
+I0805 12:58:45.737177  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_70000.caffemodel
+I0805 12:58:45.858747  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_70000.solverstate
+I0805 12:58:45.876077  8884 solver.cpp:331] Iteration 70000, Testing net (#0)
+I0805 12:58:45.876143  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:58:45.876152  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:58:45.876158  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:58:45.876389  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:58:45.876405  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:58:45.876410  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:58:46.160681  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966667
+I0805 12:58:46.172379  8884 solver.cpp:219] Iteration 70000 (74.577 iter/s, 26.8179s/2000 iters), loss = 0.0204124
+I0805 12:58:46.172425  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:58:46.172437  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0204125 (* 1 = 0.0204125 loss)
+I0805 12:58:46.172446  8884 sgd_solver.cpp:105] Iteration 70000, lr = 4.78297e-05
+I0805 12:59:12.568845  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_72000.caffemodel
+I0805 12:59:12.591300  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_72000.solverstate
+I0805 12:59:12.649127  8884 solver.cpp:331] Iteration 72000, Testing net (#0)
+I0805 12:59:12.649166  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:59:12.649171  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:59:12.649174  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:59:12.649245  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:59:12.649250  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:59:12.649253  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:59:12.916510  8884 solver.cpp:398]     Test net output #0: acc_test = 0.960833
+I0805 12:59:12.928097  8884 solver.cpp:219] Iteration 72000 (74.75 iter/s, 26.7559s/2000 iters), loss = 0.0204308
+I0805 12:59:12.928134  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:59:12.928144  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0204309 (* 1 = 0.0204309 loss)
+I0805 12:59:12.928153  8884 sgd_solver.cpp:105] Iteration 72000, lr = 4.78297e-05
+I0805 12:59:39.234184  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_74000.caffemodel
+I0805 12:59:39.275668  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_74000.solverstate
+I0805 12:59:39.294291  8884 solver.cpp:331] Iteration 74000, Testing net (#0)
+I0805 12:59:39.294340  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 12:59:39.294348  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 12:59:39.294355  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 12:59:39.294497  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 12:59:39.294508  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 12:59:39.294515  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 12:59:39.594830  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 12:59:39.606581  8884 solver.cpp:219] Iteration 74000 (74.9664 iter/s, 26.6786s/2000 iters), loss = 0.0170852
+I0805 12:59:39.606614  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 12:59:39.606626  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0170854 (* 1 = 0.0170854 loss)
+I0805 12:59:39.606632  8884 sgd_solver.cpp:105] Iteration 74000, lr = 4.78297e-05
+I0805 13:00:05.984817  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_76000.caffemodel
+I0805 13:00:06.006779  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_76000.solverstate
+I0805 13:00:06.015175  8884 solver.cpp:331] Iteration 76000, Testing net (#0)
+I0805 13:00:06.015211  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:00:06.015216  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:00:06.015228  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:00:06.015301  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:00:06.015310  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:00:06.015312  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:00:06.283334  8884 solver.cpp:398]     Test net output #0: acc_test = 0.96
+I0805 13:00:06.295182  8884 solver.cpp:219] Iteration 76000 (74.9379 iter/s, 26.6888s/2000 iters), loss = 0.133153
+I0805 13:00:06.295224  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:00:06.295235  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.133153 (* 1 = 0.133153 loss)
+I0805 13:00:06.295243  8884 sgd_solver.cpp:105] Iteration 76000, lr = 4.78297e-05
+I0805 13:00:32.631072  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_78000.caffemodel
+I0805 13:00:32.658202  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_78000.solverstate
+I0805 13:00:32.666447  8884 solver.cpp:331] Iteration 78000, Testing net (#0)
+I0805 13:00:32.666483  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:00:32.666487  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:00:32.666491  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:00:32.666550  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:00:32.666556  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:00:32.666559  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:00:32.922204  8884 solver.cpp:398]     Test net output #0: acc_test = 0.97
+I0805 13:00:32.933583  8884 solver.cpp:219] Iteration 78000 (75.0791 iter/s, 26.6386s/2000 iters), loss = 0.00502299
+I0805 13:00:32.933610  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:00:32.933634  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00502315 (* 1 = 0.00502315 loss)
+I0805 13:00:32.933642  8884 sgd_solver.cpp:105] Iteration 78000, lr = 4.78297e-05
+I0805 13:00:59.225914  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_80000.caffemodel
+I0805 13:00:59.334908  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_80000.solverstate
+I0805 13:00:59.350355  8884 solver.cpp:331] Iteration 80000, Testing net (#0)
+I0805 13:00:59.350396  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:00:59.350404  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:00:59.350409  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:00:59.350479  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:00:59.350486  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:00:59.350492  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:00:59.612797  8884 solver.cpp:398]     Test net output #0: acc_test = 0.96
+I0805 13:00:59.624481  8884 solver.cpp:219] Iteration 80000 (74.9314 iter/s, 26.6911s/2000 iters), loss = 0.00217252
+I0805 13:00:59.624517  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:00:59.624527  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00217271 (* 1 = 0.00217271 loss)
+I0805 13:00:59.624536  8884 sgd_solver.cpp:105] Iteration 80000, lr = 4.30467e-05
+I0805 13:01:26.023005  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_82000.caffemodel
+I0805 13:01:26.081640  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_82000.solverstate
+I0805 13:01:26.139892  8884 solver.cpp:331] Iteration 82000, Testing net (#0)
+I0805 13:01:26.139952  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:01:26.139962  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:01:26.139968  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:01:26.140069  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:01:26.140079  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:01:26.140084  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:01:26.398207  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965
+I0805 13:01:26.409956  8884 solver.cpp:219] Iteration 82000 (74.6669 iter/s, 26.7856s/2000 iters), loss = 0.0413864
+I0805 13:01:26.409996  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:01:26.410006  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0413865 (* 1 = 0.0413865 loss)
+I0805 13:01:26.410012  8884 sgd_solver.cpp:105] Iteration 82000, lr = 4.30467e-05
+I0805 13:01:52.723796  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_84000.caffemodel
+I0805 13:01:52.764137  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_84000.solverstate
+I0805 13:01:52.772652  8884 solver.cpp:331] Iteration 84000, Testing net (#0)
+I0805 13:01:52.772678  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:01:52.772682  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:01:52.772686  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:01:52.772743  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:01:52.772748  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:01:52.772753  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:01:53.023763  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 13:01:53.035456  8884 solver.cpp:219] Iteration 84000 (75.1155 iter/s, 26.6257s/2000 iters), loss = 0.00680264
+I0805 13:01:53.035493  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:01:53.035503  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00680273 (* 1 = 0.00680273 loss)
+I0805 13:01:53.035511  8884 sgd_solver.cpp:105] Iteration 84000, lr = 4.30467e-05
+I0805 13:02:19.311301  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_86000.caffemodel
+I0805 13:02:19.403308  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_86000.solverstate
+I0805 13:02:19.418540  8884 solver.cpp:331] Iteration 86000, Testing net (#0)
+I0805 13:02:19.418579  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:02:19.418586  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:02:19.418591  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:02:19.418629  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:02:19.418635  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:02:19.418640  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:02:19.685101  8884 solver.cpp:398]     Test net output #0: acc_test = 0.956667
+I0805 13:02:19.696832  8884 solver.cpp:219] Iteration 86000 (75.0144 iter/s, 26.6615s/2000 iters), loss = 0.00545922
+I0805 13:02:19.696862  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:02:19.696872  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00545931 (* 1 = 0.00545931 loss)
+I0805 13:02:19.696890  8884 sgd_solver.cpp:105] Iteration 86000, lr = 4.30467e-05
+I0805 13:02:45.976650  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_88000.caffemodel
+I0805 13:02:45.997859  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_88000.solverstate
+I0805 13:02:46.006438  8884 solver.cpp:331] Iteration 88000, Testing net (#0)
+I0805 13:02:46.006474  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:02:46.006479  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:02:46.006481  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:02:46.006536  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:02:46.006541  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:02:46.006544  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:02:46.256515  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 13:02:46.268286  8884 solver.cpp:219] Iteration 88000 (75.2683 iter/s, 26.5716s/2000 iters), loss = 0.0177092
+I0805 13:02:46.268322  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:02:46.268332  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0177094 (* 1 = 0.0177094 loss)
+I0805 13:02:46.268342  8884 sgd_solver.cpp:105] Iteration 88000, lr = 4.30467e-05
+I0805 13:03:12.569388  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_90000.caffemodel
+I0805 13:03:12.590598  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_90000.solverstate
+I0805 13:03:12.653554  8884 solver.cpp:331] Iteration 90000, Testing net (#0)
+I0805 13:03:12.653600  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:03:12.653609  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:03:12.653614  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:03:12.653686  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:03:12.653695  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:03:12.653700  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:03:12.924015  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965833
+I0805 13:03:12.935652  8884 solver.cpp:219] Iteration 90000 (74.9976 iter/s, 26.6675s/2000 iters), loss = 0.126325
+I0805 13:03:12.935689  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:03:12.935700  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.126325 (* 1 = 0.126325 loss)
+I0805 13:03:12.935708  8884 sgd_solver.cpp:105] Iteration 90000, lr = 3.8742e-05
+I0805 13:03:39.237607  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_92000.caffemodel
+I0805 13:03:39.257838  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_92000.solverstate
+I0805 13:03:39.266232  8884 solver.cpp:331] Iteration 92000, Testing net (#0)
+I0805 13:03:39.266266  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:03:39.266270  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:03:39.266273  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:03:39.266301  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:03:39.266304  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:03:39.266307  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:03:39.508613  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9575
+I0805 13:03:39.520220  8884 solver.cpp:219] Iteration 92000 (75.2312 iter/s, 26.5847s/2000 iters), loss = 0.024307
+I0805 13:03:39.520257  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:03:39.520267  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0243072 (* 1 = 0.0243072 loss)
+I0805 13:03:39.520277  8884 sgd_solver.cpp:105] Iteration 92000, lr = 3.8742e-05
+I0805 13:04:05.801622  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_94000.caffemodel
+I0805 13:04:05.841018  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_94000.solverstate
+I0805 13:04:05.857129  8884 solver.cpp:331] Iteration 94000, Testing net (#0)
+I0805 13:04:05.857213  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:04:05.857225  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:04:05.857239  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:04:05.857359  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:04:05.857370  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:04:05.857378  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:04:06.191701  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966666
+I0805 13:04:06.203500  8884 solver.cpp:219] Iteration 94000 (74.9529 iter/s, 26.6834s/2000 iters), loss = 0.00490341
+I0805 13:04:06.203536  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:04:06.203548  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00490358 (* 1 = 0.00490358 loss)
+I0805 13:04:06.203555  8884 sgd_solver.cpp:105] Iteration 94000, lr = 3.8742e-05
+I0805 13:04:32.634999  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_96000.caffemodel
+I0805 13:04:32.656312  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_96000.solverstate
+I0805 13:04:32.665202  8884 solver.cpp:331] Iteration 96000, Testing net (#0)
+I0805 13:04:32.665241  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:04:32.665246  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:04:32.665249  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:04:32.665275  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:04:32.665278  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:04:32.665293  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:04:32.935472  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966666
+I0805 13:04:32.947175  8884 solver.cpp:219] Iteration 96000 (74.7836 iter/s, 26.7438s/2000 iters), loss = 0.0115519
+I0805 13:04:32.947216  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:04:32.947228  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0115522 (* 1 = 0.0115522 loss)
+I0805 13:04:32.947235  8884 sgd_solver.cpp:105] Iteration 96000, lr = 3.8742e-05
+I0805 13:04:59.300070  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_98000.caffemodel
+I0805 13:04:59.357697  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_98000.solverstate
+I0805 13:04:59.373335  8884 solver.cpp:331] Iteration 98000, Testing net (#0)
+I0805 13:04:59.373399  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:04:59.373406  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:04:59.373411  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:04:59.373643  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:04:59.373654  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:04:59.373661  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:04:59.672011  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965833
+I0805 13:04:59.683775  8884 solver.cpp:219] Iteration 98000 (74.8034 iter/s, 26.7368s/2000 iters), loss = 0.0254749
+I0805 13:04:59.683809  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:04:59.683820  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0254751 (* 1 = 0.0254751 loss)
+I0805 13:04:59.683828  8884 sgd_solver.cpp:105] Iteration 98000, lr = 3.8742e-05
+I0805 13:05:12.086280  8884 blocking_queue.cpp:49] Waiting for data
+I0805 13:05:25.777488  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_100000.caffemodel
+I0805 13:05:25.802580  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_100000.solverstate
+I0805 13:05:25.813086  8884 solver.cpp:331] Iteration 100000, Testing net (#0)
+I0805 13:05:25.813122  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:05:25.813127  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:05:25.813130  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:05:25.813205  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:05:25.813212  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:05:25.813215  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:05:26.089665  8884 solver.cpp:398]     Test net output #0: acc_test = 0.963333
+I0805 13:05:26.101462  8884 solver.cpp:219] Iteration 100000 (75.7064 iter/s, 26.4179s/2000 iters), loss = 0.00724072
+I0805 13:05:26.101492  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:05:26.101503  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00724094 (* 1 = 0.00724094 loss)
+I0805 13:05:26.101511  8884 sgd_solver.cpp:105] Iteration 100000, lr = 3.48678e-05
+I0805 13:05:52.379142  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_102000.caffemodel
+I0805 13:05:52.399669  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_102000.solverstate
+I0805 13:05:52.408058  8884 solver.cpp:331] Iteration 102000, Testing net (#0)
+I0805 13:05:52.408103  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:05:52.408108  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:05:52.408113  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:05:52.408157  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:05:52.408161  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:05:52.408164  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:05:52.659309  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 13:05:52.670979  8884 solver.cpp:219] Iteration 102000 (75.2738 iter/s, 26.5697s/2000 iters), loss = 0.00188048
+I0805 13:05:52.671017  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:05:52.671027  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00188068 (* 1 = 0.00188068 loss)
+I0805 13:05:52.671036  8884 sgd_solver.cpp:105] Iteration 102000, lr = 3.48678e-05
+I0805 13:06:18.976038  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_104000.caffemodel
+I0805 13:06:19.003990  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_104000.solverstate
+I0805 13:06:19.012773  8884 solver.cpp:331] Iteration 104000, Testing net (#0)
+I0805 13:06:19.012807  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:06:19.012814  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:06:19.012816  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:06:19.013059  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:06:19.013067  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:06:19.013070  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:06:19.260046  8884 solver.cpp:398]     Test net output #0: acc_test = 0.973333
+I0805 13:06:19.271709  8884 solver.cpp:219] Iteration 104000 (75.1854 iter/s, 26.6009s/2000 iters), loss = 0.0173405
+I0805 13:06:19.271746  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:06:19.271755  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0173407 (* 1 = 0.0173407 loss)
+I0805 13:06:19.271764  8884 sgd_solver.cpp:105] Iteration 104000, lr = 3.48678e-05
+I0805 13:06:45.552276  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_106000.caffemodel
+I0805 13:06:45.581431  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_106000.solverstate
+I0805 13:06:45.594583  8884 solver.cpp:331] Iteration 106000, Testing net (#0)
+I0805 13:06:45.594633  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:06:45.594640  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:06:45.594645  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:06:45.594676  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:06:45.594689  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:06:45.594694  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:06:45.890187  8884 solver.cpp:398]     Test net output #0: acc_test = 0.969167
+I0805 13:06:45.902074  8884 solver.cpp:219] Iteration 106000 (75.1018 iter/s, 26.6305s/2000 iters), loss = 0.0751351
+I0805 13:06:45.902112  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:06:45.902125  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0751353 (* 1 = 0.0751353 loss)
+I0805 13:06:45.902133  8884 sgd_solver.cpp:105] Iteration 106000, lr = 3.48678e-05
+I0805 13:07:12.292230  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_108000.caffemodel
+I0805 13:07:12.315572  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_108000.solverstate
+I0805 13:07:12.324792  8884 solver.cpp:331] Iteration 108000, Testing net (#0)
+I0805 13:07:12.324817  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:07:12.324826  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:07:12.324828  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:07:12.324896  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:07:12.324903  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:07:12.324906  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:07:12.610884  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 13:07:12.622668  8884 solver.cpp:219] Iteration 108000 (74.8482 iter/s, 26.7208s/2000 iters), loss = 0.00442705
+I0805 13:07:12.622697  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:07:12.622709  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00442714 (* 1 = 0.00442714 loss)
+I0805 13:07:12.622716  8884 sgd_solver.cpp:105] Iteration 108000, lr = 3.48678e-05
+I0805 13:07:38.914428  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_110000.caffemodel
+I0805 13:07:38.953061  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_110000.solverstate
+I0805 13:07:38.969790  8884 solver.cpp:331] Iteration 110000, Testing net (#0)
+I0805 13:07:38.969851  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:07:38.969857  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:07:38.969863  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:07:38.969949  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:07:38.969959  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:07:38.969964  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:07:39.288002  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 13:07:39.300035  8884 solver.cpp:219] Iteration 110000 (74.9694 iter/s, 26.6775s/2000 iters), loss = 0.00333668
+I0805 13:07:39.300071  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:07:39.300084  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00333676 (* 1 = 0.00333676 loss)
+I0805 13:07:39.300092  8884 sgd_solver.cpp:105] Iteration 110000, lr = 3.1381e-05
+I0805 13:08:05.716217  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_112000.caffemodel
+I0805 13:08:05.737272  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_112000.solverstate
+I0805 13:08:05.747601  8884 solver.cpp:331] Iteration 112000, Testing net (#0)
+I0805 13:08:05.747633  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:08:05.747638  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:08:05.747642  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:08:05.747714  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:08:05.747720  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:08:05.747723  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:08:05.996599  8884 solver.cpp:398]     Test net output #0: acc_test = 0.959167
+I0805 13:08:06.008302  8884 solver.cpp:219] Iteration 112000 (74.8827 iter/s, 26.7084s/2000 iters), loss = 0.0393109
+I0805 13:08:06.008340  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:08:06.008352  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.039311 (* 1 = 0.039311 loss)
+I0805 13:08:06.008358  8884 sgd_solver.cpp:105] Iteration 112000, lr = 3.1381e-05
+I0805 13:08:32.293362  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_114000.caffemodel
+I0805 13:08:32.332170  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_114000.solverstate
+I0805 13:08:32.349159  8884 solver.cpp:331] Iteration 114000, Testing net (#0)
+I0805 13:08:32.349202  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:08:32.349210  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:08:32.349215  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:08:32.349344  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:08:32.349355  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:08:32.349362  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:08:32.662711  8884 solver.cpp:398]     Test net output #0: acc_test = 0.968333
+I0805 13:08:32.674652  8884 solver.cpp:219] Iteration 114000 (75.0004 iter/s, 26.6665s/2000 iters), loss = 0.0311126
+I0805 13:08:32.674687  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:08:32.674701  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0311127 (* 1 = 0.0311127 loss)
+I0805 13:08:32.674710  8884 sgd_solver.cpp:105] Iteration 114000, lr = 3.1381e-05
+I0805 13:08:59.070652  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_116000.caffemodel
+I0805 13:08:59.090526  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_116000.solverstate
+I0805 13:08:59.098860  8884 solver.cpp:331] Iteration 116000, Testing net (#0)
+I0805 13:08:59.098893  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:08:59.098897  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:08:59.098901  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:08:59.098927  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:08:59.098930  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:08:59.098933  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:08:59.344992  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 13:08:59.356580  8884 solver.cpp:219] Iteration 116000 (74.9566 iter/s, 26.6821s/2000 iters), loss = 0.014371
+I0805 13:08:59.356606  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:08:59.356631  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.014371 (* 1 = 0.014371 loss)
+I0805 13:08:59.356639  8884 sgd_solver.cpp:105] Iteration 116000, lr = 3.1381e-05
+I0805 13:09:25.647519  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_118000.caffemodel
+I0805 13:09:25.697891  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_118000.solverstate
+I0805 13:09:25.712782  8884 solver.cpp:331] Iteration 118000, Testing net (#0)
+I0805 13:09:25.712836  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:09:25.712857  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:09:25.712862  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:09:25.713215  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:09:25.713229  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:09:25.713234  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:09:26.013048  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965
+I0805 13:09:26.024852  8884 solver.cpp:219] Iteration 118000 (74.995 iter/s, 26.6684s/2000 iters), loss = 0.0149035
+I0805 13:09:26.024885  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:09:26.024897  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0149037 (* 1 = 0.0149037 loss)
+I0805 13:09:26.024905  8884 sgd_solver.cpp:105] Iteration 118000, lr = 3.1381e-05
+I0805 13:09:52.318297  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_120000.caffemodel
+I0805 13:09:52.339817  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_120000.solverstate
+I0805 13:09:52.348305  8884 solver.cpp:331] Iteration 120000, Testing net (#0)
+I0805 13:09:52.348341  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:09:52.348345  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:09:52.348348  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:09:52.348414  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:09:52.348420  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:09:52.348423  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:09:52.587904  8884 solver.cpp:398]     Test net output #0: acc_test = 0.959166
+I0805 13:09:52.599608  8884 solver.cpp:219] Iteration 120000 (75.2589 iter/s, 26.5749s/2000 iters), loss = 0.0663696
+I0805 13:09:52.599644  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:09:52.599654  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0663698 (* 1 = 0.0663698 loss)
+I0805 13:09:52.599661  8884 sgd_solver.cpp:105] Iteration 120000, lr = 2.82429e-05
+I0805 13:10:18.941942  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_122000.caffemodel
+I0805 13:10:18.969017  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_122000.solverstate
+I0805 13:10:18.977288  8884 solver.cpp:331] Iteration 122000, Testing net (#0)
+I0805 13:10:18.977332  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:10:18.977337  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:10:18.977340  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:10:18.977514  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:10:18.977520  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:10:18.977524  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:10:19.235913  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 13:10:19.247689  8884 solver.cpp:219] Iteration 122000 (75.0518 iter/s, 26.6482s/2000 iters), loss = 0.0353426
+I0805 13:10:19.247730  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:10:19.247741  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0353429 (* 1 = 0.0353429 loss)
+I0805 13:10:19.247748  8884 sgd_solver.cpp:105] Iteration 122000, lr = 2.82429e-05
+I0805 13:10:45.639557  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_124000.caffemodel
+I0805 13:10:45.659337  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_124000.solverstate
+I0805 13:10:45.667837  8884 solver.cpp:331] Iteration 124000, Testing net (#0)
+I0805 13:10:45.667871  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:10:45.667877  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:10:45.667879  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:10:45.667908  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:10:45.667912  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:10:45.667927  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:10:45.927323  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9575
+I0805 13:10:45.939064  8884 solver.cpp:219] Iteration 124000 (74.9301 iter/s, 26.6915s/2000 iters), loss = 0.00793803
+I0805 13:10:45.939105  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:10:45.939116  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00793824 (* 1 = 0.00793824 loss)
+I0805 13:10:45.939122  8884 sgd_solver.cpp:105] Iteration 124000, lr = 2.82429e-05
+I0805 13:11:12.235146  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_126000.caffemodel
+I0805 13:11:12.256100  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_126000.solverstate
+I0805 13:11:12.288769  8884 solver.cpp:331] Iteration 126000, Testing net (#0)
+I0805 13:11:12.288805  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:11:12.288810  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:11:12.288812  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:11:12.288868  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:11:12.288873  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:11:12.288877  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:11:12.536442  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 13:11:12.548164  8884 solver.cpp:219] Iteration 126000 (75.1618 iter/s, 26.6093s/2000 iters), loss = 0.00119661
+I0805 13:11:12.548203  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:11:12.548213  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00119682 (* 1 = 0.00119682 loss)
+I0805 13:11:12.548221  8884 sgd_solver.cpp:105] Iteration 126000, lr = 2.82429e-05
+I0805 13:11:38.822737  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_128000.caffemodel
+I0805 13:11:38.843577  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_128000.solverstate
+I0805 13:11:38.851850  8884 solver.cpp:331] Iteration 128000, Testing net (#0)
+I0805 13:11:38.851883  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:11:38.851888  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:11:38.851891  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:11:38.851946  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:11:38.851951  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:11:38.851954  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:11:39.101536  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 13:11:39.113247  8884 solver.cpp:219] Iteration 128000 (75.2863 iter/s, 26.5652s/2000 iters), loss = 0.00147896
+I0805 13:11:39.113284  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:11:39.113294  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00147924 (* 1 = 0.00147924 loss)
+I0805 13:11:39.113302  8884 sgd_solver.cpp:105] Iteration 128000, lr = 2.82429e-05
+I0805 13:12:05.407290  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_130000.caffemodel
+I0805 13:12:05.446277  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_130000.solverstate
+I0805 13:12:05.461838  8884 solver.cpp:331] Iteration 130000, Testing net (#0)
+I0805 13:12:05.461879  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:12:05.461885  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:12:05.461890  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:12:05.461980  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:12:05.461988  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:12:05.461993  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:12:05.778477  8884 solver.cpp:398]     Test net output #0: acc_test = 0.965
+I0805 13:12:05.790364  8884 solver.cpp:219] Iteration 130000 (74.9702 iter/s, 26.6773s/2000 iters), loss = 0.00145783
+I0805 13:12:05.790396  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:12:05.790410  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.00145816 (* 1 = 0.00145816 loss)
+I0805 13:12:05.790417  8884 sgd_solver.cpp:105] Iteration 130000, lr = 2.54186e-05
+I0805 13:12:32.114558  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_132000.caffemodel
+I0805 13:12:32.134884  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_132000.solverstate
+I0805 13:12:32.143507  8884 solver.cpp:331] Iteration 132000, Testing net (#0)
+I0805 13:12:32.143611  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:12:32.143616  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:12:32.143620  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:12:32.143646  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:12:32.143649  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:12:32.143652  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:12:32.389374  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 13:12:32.401087  8884 solver.cpp:219] Iteration 132000 (75.1572 iter/s, 26.6109s/2000 iters), loss = 0.020989
+I0805 13:12:32.401124  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:12:32.401134  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0209894 (* 1 = 0.0209894 loss)
+I0805 13:12:32.401141  8884 sgd_solver.cpp:105] Iteration 132000, lr = 2.54186e-05
+I0805 13:12:58.708410  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_134000.caffemodel
+I0805 13:12:58.758651  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_134000.solverstate
+I0805 13:12:58.773298  8884 solver.cpp:331] Iteration 134000, Testing net (#0)
+I0805 13:12:58.773386  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:12:58.773401  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:12:58.773406  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:12:58.773757  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:12:58.773768  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:12:58.773773  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:12:59.076313  8884 solver.cpp:398]     Test net output #0: acc_test = 0.963333
+I0805 13:12:59.088214  8884 solver.cpp:219] Iteration 134000 (74.942 iter/s, 26.6873s/2000 iters), loss = 0.0148429
+I0805 13:12:59.088260  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:12:59.088274  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0148433 (* 1 = 0.0148433 loss)
+I0805 13:12:59.088280  8884 sgd_solver.cpp:105] Iteration 134000, lr = 2.54186e-05
+I0805 13:13:25.405226  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_136000.caffemodel
+I0805 13:13:25.425616  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_136000.solverstate
+I0805 13:13:25.434156  8884 solver.cpp:331] Iteration 136000, Testing net (#0)
+I0805 13:13:25.434191  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:13:25.434196  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:13:25.434200  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:13:25.434234  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:13:25.434238  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:13:25.434252  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:13:25.685824  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9625
+I0805 13:13:25.697490  8884 solver.cpp:219] Iteration 136000 (75.1613 iter/s, 26.6094s/2000 iters), loss = 0.0272063
+I0805 13:13:25.697528  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:13:25.697538  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0272066 (* 1 = 0.0272066 loss)
+I0805 13:13:25.697546  8884 sgd_solver.cpp:105] Iteration 136000, lr = 2.54186e-05
+I0805 13:13:51.971774  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_138000.caffemodel
+I0805 13:13:51.993260  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_138000.solverstate
+I0805 13:13:52.023088  8884 solver.cpp:331] Iteration 138000, Testing net (#0)
+I0805 13:13:52.023124  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:13:52.023129  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:13:52.023133  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:13:52.023211  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:13:52.023218  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:13:52.023221  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:13:52.280594  8884 solver.cpp:398]     Test net output #0: acc_test = 0.970833
+I0805 13:13:52.292218  8884 solver.cpp:219] Iteration 138000 (75.2024 iter/s, 26.5949s/2000 iters), loss = 0.0133332
+I0805 13:13:52.292256  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:13:52.292266  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0133335 (* 1 = 0.0133335 loss)
+I0805 13:13:52.292274  8884 sgd_solver.cpp:105] Iteration 138000, lr = 2.54186e-05
+I0805 13:14:18.560286  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_140000.caffemodel
+I0805 13:14:18.587178  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_140000.solverstate
+I0805 13:14:18.595134  8884 solver.cpp:331] Iteration 140000, Testing net (#0)
+I0805 13:14:18.595188  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:14:18.595196  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:14:18.595198  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:14:18.595417  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:14:18.595423  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:14:18.595427  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:14:18.842739  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966666
+I0805 13:14:18.854432  8884 solver.cpp:219] Iteration 140000 (75.2945 iter/s, 26.5624s/2000 iters), loss = 0.0228751
+I0805 13:14:18.854470  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:14:18.854480  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0228754 (* 1 = 0.0228754 loss)
+I0805 13:14:18.854488  8884 sgd_solver.cpp:105] Iteration 140000, lr = 2.28768e-05
+I0805 13:14:45.134374  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_142000.caffemodel
+I0805 13:14:45.168048  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_142000.solverstate
+I0805 13:14:45.183531  8884 solver.cpp:331] Iteration 142000, Testing net (#0)
+I0805 13:14:45.183571  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:14:45.183578  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:14:45.183583  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:14:45.183626  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:14:45.183634  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:14:45.183640  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:14:45.511394  8884 solver.cpp:398]     Test net output #0: acc_test = 0.966667
+I0805 13:14:45.523424  8884 solver.cpp:219] Iteration 142000 (74.993 iter/s, 26.6692s/2000 iters), loss = 0.0101578
+I0805 13:14:45.523458  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:14:45.523469  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.010158 (* 1 = 0.010158 loss)
+I0805 13:14:45.523478  8884 sgd_solver.cpp:105] Iteration 142000, lr = 2.28768e-05
+I0805 13:15:11.850378  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_144000.caffemodel
+I0805 13:15:11.942644  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_144000.solverstate
+I0805 13:15:11.957933  8884 solver.cpp:331] Iteration 144000, Testing net (#0)
+I0805 13:15:11.957976  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:15:11.957983  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:15:11.957988  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:15:11.958060  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:15:11.958067  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:15:11.958072  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:15:12.219651  8884 solver.cpp:398]     Test net output #0: acc_test = 0.975
+I0805 13:15:12.231365  8884 solver.cpp:219] Iteration 144000 (74.8836 iter/s, 26.7081s/2000 iters), loss = 0.0123763
+I0805 13:15:12.231401  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:15:12.231410  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0123766 (* 1 = 0.0123766 loss)
+I0805 13:15:12.231417  8884 sgd_solver.cpp:105] Iteration 144000, lr = 2.28768e-05
+I0805 13:15:38.532826  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_146000.caffemodel
+I0805 13:15:38.571013  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_146000.solverstate
+I0805 13:15:38.592439  8884 solver.cpp:331] Iteration 146000, Testing net (#0)
+I0805 13:15:38.592579  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:15:38.592617  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:15:38.592624  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:15:38.592701  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:15:38.592712  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:15:38.592725  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:15:38.914698  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 13:15:38.926578  8884 solver.cpp:219] Iteration 146000 (74.9193 iter/s, 26.6954s/2000 iters), loss = 0.0114094
+I0805 13:15:38.926612  8884 solver.cpp:238]     Train net output #0: acc_train = 1
+I0805 13:15:38.926625  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0114097 (* 1 = 0.0114097 loss)
+I0805 13:15:38.926632  8884 sgd_solver.cpp:105] Iteration 146000, lr = 2.28768e-05
+I0805 13:16:05.335469  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_148000.caffemodel
+I0805 13:16:05.356858  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_148000.solverstate
+I0805 13:16:05.392702  8884 solver.cpp:331] Iteration 148000, Testing net (#0)
+I0805 13:16:05.392751  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:16:05.392760  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:16:05.392762  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:16:05.392807  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:16:05.392812  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:16:05.392817  8884 net.cpp:678] Ignoring source layer acc_train
+I0805 13:16:05.656621  8884 solver.cpp:398]     Test net output #0: acc_test = 0.9675
+I0805 13:16:05.668292  8884 solver.cpp:219] Iteration 148000 (74.789 iter/s, 26.7419s/2000 iters), loss = 0.024166
+I0805 13:16:05.668334  8884 solver.cpp:238]     Train net output #0: acc_train = 0.983871
+I0805 13:16:05.668345  8884 solver.cpp:238]     Train net output #1: softmax_loss = 0.0241664 (* 1 = 0.0241664 loss)
+I0805 13:16:05.668352  8884 sgd_solver.cpp:105] Iteration 148000, lr = 2.28768e-05
+I0805 13:16:13.457921  8884 blocking_queue.cpp:49] Waiting for data
+I0805 13:16:32.128221  8884 solver.cpp:448] Snapshotting to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_150000.caffemodel
+I0805 13:16:32.151010  8884 sgd_solver.cpp:273] Snapshotting solver state to binary proto file /home/username/ocr8100/model/snap_shot20/_iter_150000.solverstate
+I0805 13:16:32.160410  8884 solver.cpp:331] Iteration 150000, Testing net (#0)
+I0805 13:16:32.160436  8884 net.cpp:678] Ignoring source layer raw_label_slice
+I0805 13:16:32.160442  8884 net.cpp:678] Ignoring source layer label_raw_label_slice_0_split
+I0805 13:16:32.160445  8884 net.cpp:678] Ignoring source layer label_silence
+I0805 13:16:32.160487  8884 net.cpp:678] Ignoring source layer fc6_fc6_0_split
+I0805 13:16:32.160492  8884 net.cpp:678] Ignoring source layer softmax_loss
+I0805 13:16:32.160495  8884 net.cpp:678] Ignoring source layer acc_train
